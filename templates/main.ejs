@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title><%= name %></title>
+        <style>
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1><%= name %></h1>
+            <p><%= description %></p>
+        </header>
+        <nav>
+            <%
+            for (let type in filter){
+                if (!filter.hasOwnProperty(type)) continue;
+            %>
+                <details>
+                    <summary>
+                    <a href='#<%= type %>'><%= type %></a>
+                    </summary>  
+                </details>
+            <%
+            }
+            %>
+        </nav>
+        <section>
+
+        </section>
+    </body>
+</html>
