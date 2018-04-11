@@ -3,30 +3,173 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><%= name %></title>
-        <style>
+        <style name='general'>
+            :root {
+                --dark-shade: Gray;
+                --medium-shade: LightGray;
+                --light-shade: #f9f9f9;
+                --color: Crimson;
+                --light-color: #f48aa0;
+                --dark-color: #8c0d26;
+                font-family: 'Tahoma';
+            }
+
+            a {
+                text-decoration: none;
+                font-family: 'Calibri';
+            }
+
+            section::after{
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                content: "";
+                width: 500px;
+                height: 1px;
+                background: var(--medium-shade);
+            }
+
+            h1{
+                color: var(--color)
+            }
+            h2{
+                color: var(--color)
+            }
+        </style>
+        <style name='tooltip'>
+            .tooltip {
+                position: relative;
+            }
+            /* Tooltip text */
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                
+                background-color: var(--medium-shade);
+                color: Black;
+                padding: 5px;
+                border-radius: 6px;
+                font-size: small;
+
+                /* Position the tooltip text */
+                position: absolute;
+                z-index: 1;
+                top: 50%;
+                transform: translateY(-50%); /* top 50% -> center 50% */
+                left: 100%;
+                margin-left: 5px;
+
+                /* Fade in tooltip */
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            /* Tooltip arrow */
+            .tooltip .tooltiptext::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 0;
+                margin-left: -9px;
+                margin-top: auto;
+                border-width: 5px;
+                border-style: solid;
+                border-color: transparent var(--medium-shade) transparent transparent;
+            }
+
+            /* Show the tooltip text when you mouse over the tooltip container */
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 0.9;
+            }
+        </style>
+        <style name='nav'>
+            nav {
+                float: left;
+                min-width: 200px;
+                margin-right: 10px;
+            }
+
+            nav details {
+                padding: 0;
+                border: solid;
+                border-width: thin;
+                border-color: var(--medium-shade);
+                margin-bottom: -1px;
+                background: var(--light-shade);
+            }
+            nav details summary{
+                background: white;
+                padding: 7px;
+            }
+            nav details summary::-webkit-details-marker {
+                color: var(--dark-shade)
+            }
+            nav ul {
+                list-style-type: none;
+                padding: 0;                
+                margin: 0;
+            }
+            nav li {
+                padding: 5px;
+                padding-left: 15px;
+                margin-bottom: -1px;
+                border: solid;
+                border-width: thin;
+                border-color: var(--medium-shade);
+            }
         </style>
     </head>
     <body>
-        <header>
-            <h1><%= name %></h1>
-            <p><%= description %></p>
-        </header>
-        <nav>
+        <div style='margin: 20px 40px'>
+            <header>
+                <h1><%= name %></h1>
+                <p><%= description %></p>
+            </header>
+            <nav>
+                <%
+                for (let kind in filter){
+                    if (!filter.hasOwnProperty(kind)) continue;
+                %>
+                    <details>
+                        <summary>
+                        <a href='#<%= kind %>'><%= kind %></a>
+                        </summary>
+                        <ul>
+                        <%
+                        let types = filter[kind](schema);
+                        for(let i=0; i<types.length; i++){
+                            let type = types[i].name.value;
+                            let desc = types[i].description.value;
+                            const maxLength=20;
+                            %>
+                            <li class='tooltip'>
+                                <a style='font-size: small' href='#<%= type%>'><%= type %></a>
+                                <span style='font-size: x-small'><%= desc.length>maxLength?desc.slice(0,maxLength-3)+'...':desc %></span>
+                                <span class='tooltiptext'><%= desc %></span>
+                            </li>
+                            <%
+                        }
+                        %> 
+                        </ul>
+                    </details>
+                <%
+                }
+                %>
+            </nav>
             <%
-            for (let type in filter){
-                if (!filter.hasOwnProperty(type)) continue;
+            for (let kind in filter){
+                if (!filter.hasOwnProperty(kind)) continue;
             %>
-                <details>
-                    <summary>
-                    <a href='#<%= type %>'><%= type %></a>
-                    </summary>  
-                </details>
-            <%
-            }
-            %>
-        </nav>
-        <section>
-
-        </section>
+                <section name='<%= kind %>' class='kind'>
+                    <h2><%= kind %></h2>
+                    <%
+                    let types = filter[kind](schema);
+                    for(let i=0; i<types.length; i++){
+                        
+                    }
+                    %>
+                </section>
+            <% } %>
+        </div>
     </body>
 </html>

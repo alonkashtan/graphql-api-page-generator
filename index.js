@@ -87,12 +87,14 @@ let schema = {
     index: {}
 }
 
+// TODO: Sanitize schema, apiName, apiDescription
+
 // prepare by type
 AST.definitions.forEach(function(item){
     if (!schema[item.kind]) schema[item.kind]=[];
 
     schema[item.kind].push(item);
-    schema.index[item.name.value] = item.kind
+    schema.index[item.name.value] = item.kind;
 })
 
 let templateParam = {

@@ -13,7 +13,8 @@ const scalarDef = "ScalarTypeDefinition";
  * @param {string} kind 
  */
 function filterByKind(elements, kind){
-    return elements.filter(element=>elements.kind==kind);
+    //return elements.filter(element=>elements.kind==kind);
+    return elements[kind]||[];
 }
 
 function filterFactory(kind){
@@ -25,22 +26,20 @@ module.exports ={
     * @param {DefinitionNode[]} elements AST elements
     */ 
     Query: function(elements) {
-        return 
-            filterByKind(elements, objectDef)
-                .filter(element.name.value==queryName)
-                .find(element=>true);
+        return [filterByKind(elements, objectDef)
+                .filter(element=>element.name.value==queryName)
+                .find(element=>true)];
     },
     Mutation: function(elements) {
-        return 
-            filterByKind(elements, objectDef)
-                .filter(element.name.value==mutationName)
-                .find(element=>true);
+        return [filterByKind(elements, objectDef)
+                .filter(element=>element.name.value==mutationName)
+                .find(element=>true)];
     },
     Types: function(elements) {
-        return 
-            filterByKind(elements, objectDef)
-                .filter(element.name.value!=mutationName && element.name!=queryName)
-                .find(element=>true);
+        return filterByKind(elements, objectDef)
+                .filter(
+                    element=>element.name.value!=mutationName && 
+                    element.name.value!=queryName);
     },
     Interfaces: filterFactory(interfaceDef),
     Enums: filterFactory(enumDef),
