@@ -5,19 +5,23 @@ const fs = require('fs')
 const graphql = require('graphql');
 const parsers = require('./parsers')
 const elementsTypeFilter = require('./elementsTypeFilter.js')
+const sanitizer = require('./schemaSanitizer')
 
 // schema. TODO: get file
 let schemaText =`
-    "Represents a year"
+    """
+    Represents a <b>year</b><br/>
+    And more
+    """
     scalar Year
     
-    "A named object"
+    "A named object <img src='hello'/> <h1>definition</h1>"
     interface Named {
         "name of the object"
         name: String
     }
     
-    "Represents a student"
+    "Represents a student. This is a very important object for understanding how this repo works af therefore needs a very very long description so we know it's important"
     type Student implements Named {
         "The name of the student"
         name: String
@@ -80,14 +84,15 @@ let apiName = 'Example API'
 let apiDescription = 'This is the best API in the neighborhood.'
 let outputFile = 'out.html';
 
-let AST = graphql.parse(schemaText);
-fs.writeFileSync('out.json', JSON.stringify(AST,null,4));
+let AST = JSON.stringify(graphql.parse(schemaText),null,4);
+fs.writeFileSync('out.json', AST);
 
 let schema = {
     index: {}
 }
+AST = JSON.parse(AST);
 
-// TODO: Sanitize schema, apiName, apiDescription
+sanitizer(AST);
 
 // prepare by type
 AST.definitions.forEach(function(item){

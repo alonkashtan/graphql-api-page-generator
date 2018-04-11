@@ -140,12 +140,13 @@
                         for(let i=0; i<types.length; i++){
                             let type = types[i].name.value;
                             let desc = types[i].description.value;
+                            let desctx = types[i].description.text||"";
                             const maxLength=20;
                             %>
                             <li class='tooltip'>
                                 <a style='font-size: small' href='#<%= type%>'><%= type %></a>
-                                <span style='font-size: x-small'><%= desc.length>maxLength?desc.slice(0,maxLength-3)+'...':desc %></span>
-                                <span class='tooltiptext'><%= desc %></span>
+                                <span style='font-size: x-small'><%- desctx.length>maxLength?desctx.slice(0,maxLength-3)+'...':desctx %></span>
+                                <span class='tooltiptext'><%- desc %></span>
                             </li>
                             <%
                         }
@@ -159,17 +160,25 @@
             <%
             for (let kind in filter){
                 if (!filter.hasOwnProperty(kind)) continue;
+                let items = filter[kind](schema);
+                if (items.length>0) {
             %>
                 <section name='<%= kind %>' class='kind'>
                     <h2><%= kind %></h2>
                     <%
-                    let types = filter[kind](schema);
-                    for(let i=0; i<types.length; i++){
-                        
+                    for(let i=0; i<items.length; i++){
+                        let item = items[i];
+                        try{
+                        %><%- include(kind+'.ejs', item) %><%
+                        }
+                        catch(err){
+                            %>No template<%
+                        }
+
                     }
                     %>
                 </section>
-            <% } %>
+            <% }} %>
         </div>
     </body>
 </html>
