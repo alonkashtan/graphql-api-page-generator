@@ -6,6 +6,7 @@ const graphql = require('graphql');
 const parsers = require('./parsers')
 const elementsTypeFilter = require('./elementsTypeFilter.js')
 const sanitizer = require('./schemaSanitizer')
+const preprocessor = require('./schemaPreprocessor');
 
 // schema. TODO: get file
 let schemaText =`
@@ -90,7 +91,7 @@ fs.writeFileSync('out.json', AST);
 let schema = {
     index: {}
 }
-AST = JSON.parse(AST);
+AST = JSON.parse(AST); //The double parse eliminates some strange tags that have loops in the references when the AST was built
 
 sanitizer(AST);
 
@@ -100,7 +101,13 @@ AST.definitions.forEach(function(item){
 
     schema[item.kind].push(item);
     schema.index[item.name.value] = item.kind;
-})
+});
+
+// Add implementors to interface definitions
+preprocessor.addImplementors(
+    // for all types, including Query and Mutation (although not very likely they will implement an interface)
+    elementsTypeFilter.Types(schema).concat(elementsTypeFilter.Query(schema), elementsTypeFilter.Mutation(schema)), 
+    elementsTypeFilter.Interfaces(schema));
 
 let templateParam = {
     schema: schema,

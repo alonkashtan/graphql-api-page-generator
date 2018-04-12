@@ -1,0 +1,6 @@
+<%- include('buildingBlocks/header.ejs', locals) %>
+<h4 style: 'line-height: normal'>Implementors:</h4>
+<div class='content'><%- 
+implementors.map(imp => '<a class="name" href="#' + imp + '">' + imp + '</a>').join(', ');
+%></div>
+<%- include('buildingBlocks/fields.ejs', locals) %>

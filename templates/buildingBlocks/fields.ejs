@@ -1,0 +1,15 @@
+<h4>Fields:</h4>
+<div class='content'><%
+for (var i in fields){
+    if (!fields.hasOwnProperty(i)) continue;
+
+    let field = fields[i];
+    %>
+    <p id='<%= name.value + "." + field.name.value %>'>
+        <span class='field'><%= field.name.value %></span>: 
+        <span class='name'><a href='#<%= field.type.name.value %>'><%= field.type.name.value %></a></span>
+    </p>
+    <p class='description'><%- field.description.value %></p>
+    <%
+}
+%></div>

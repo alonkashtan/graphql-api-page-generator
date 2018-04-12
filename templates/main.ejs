@@ -19,21 +19,41 @@
                 font-family: 'Calibri';
             }
 
-            section::after{
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                content: "";
-                width: 500px;
+            section { 
+                margin-left: 240px;
+                margin-right: 40px;
+            }
+
+            hr {
                 height: 1px;
-                background: var(--medium-shade);
+                background-color: var(--medium-shade);
+                border-width:0;
             }
 
             h1{
                 color: var(--color)
             }
             h2{
-                color: var(--color)
+                color: var(--color);
+                margin-left: -20px;
+            }
+            h4{
+                color: var(--dark-color)
+            }
+            h5{
+                line-height: 0em;
+                margin-bottom: 0;
+                font-size: large;
+            }
+
+            .name{
+                font-family: 'Courier New'
+            }
+            .field{
+                font-weight: bold
+            }
+            .content{
+                margin-left: 10px;
             }
         </style>
         <style name='tooltip'>
@@ -85,8 +105,10 @@
         <style name='nav'>
             nav {
                 float: left;
-                min-width: 200px;
+                position: fixed;
+                width: 200px;
                 margin-right: 10px;
+                z-index: 2;
             }
 
             nav details {
@@ -111,8 +133,8 @@
             }
             nav li {
                 padding: 5px;
-                padding-left: 15px;
-                margin-bottom: -1px;
+                padding-left: 20px;
+                margin: -1px;
                 border: solid;
                 border-width: thin;
                 border-color: var(--medium-shade);
@@ -120,65 +142,64 @@
         </style>
     </head>
     <body>
-        <div style='margin: 20px 40px'>
-            <header>
-                <h1><%= name %></h1>
-                <p><%= description %></p>
-            </header>
-            <nav>
-                <%
-                for (let kind in filter){
-                    if (!filter.hasOwnProperty(kind)) continue;
-                %>
-                    <details>
-                        <summary>
-                        <a href='#<%= kind %>'><%= kind %></a>
-                        </summary>
-                        <ul>
-                        <%
-                        let types = filter[kind](schema);
-                        for(let i=0; i<types.length; i++){
-                            let type = types[i].name.value;
-                            let desc = types[i].description.value;
-                            let desctx = types[i].description.text||"";
-                            const maxLength=20;
-                            %>
-                            <li class='tooltip'>
-                                <a style='font-size: small' href='#<%= type%>'><%= type %></a>
-                                <span style='font-size: x-small'><%- desctx.length>maxLength?desctx.slice(0,maxLength-3)+'...':desctx %></span>
-                                <span class='tooltiptext'><%- desc %></span>
-                            </li>
-                            <%
-                        }
-                        %> 
-                        </ul>
-                    </details>
-                <%
-                }
-                %>
-            </nav>
+        <header style='margin: 40px;'>
+            <h1><%= name %></h1>
+            <p><%= description %></p>
+        </header>
+        <nav>
             <%
             for (let kind in filter){
                 if (!filter.hasOwnProperty(kind)) continue;
-                let items = filter[kind](schema);
-                if (items.length>0) {
             %>
-                <section name='<%= kind %>' class='kind'>
-                    <h2><%= kind %></h2>
+                <details>
+                    <summary>
+                    <a href='#<%= kind %>'><%= kind %></a>
+                    </summary>
+                    <ul>
                     <%
-                    for(let i=0; i<items.length; i++){
-                        let item = items[i];
-                        try{
-                        %><%- include(kind+'.ejs', item) %><%
-                        }
-                        catch(err){
-                            %>No template<%
-                        }
-
+                    let types = filter[kind](schema);
+                    for(let i=0; i<types.length; i++){
+                        let type = types[i].name.value;
+                        let desc = types[i].description.value;
+                        let desctx = types[i].description.text||"";
+                        const maxLength=20;
+                        %>
+                        <li class='tooltip'>
+                            <a style='font-size: small' href='#<%= type%>'><%= type %></a>
+                            <span style='font-size: x-small'><%- desctx.length>maxLength?desctx.slice(0,maxLength-3)+'...':desctx %></span>
+                            <span class='tooltiptext'><%- desc %></span>
+                        </li>
+                        <%
                     }
-                    %>
-                </section>
-            <% }} %>
-        </div>
+                    %> 
+                    </ul>
+                </details>
+            <%
+            }
+            %>
+        </nav>
+        <%
+        for (let kind in filter){
+            if (!filter.hasOwnProperty(kind)) continue;
+            let items = filter[kind](schema);
+            if (items.length>0) {
+        %>
+            <section name='<%= kind %>' id='<%= kind %>' class='kind'>
+                <h2><%= kind %></h2>
+                <%
+                for(let i=0; i<items.length; i++){
+                    let item = items[i];
+                    try{
+                    %><%- include(kind+'.ejs', item) %><%
+                    }
+                    catch(err){
+                        %>No template<%
+                    }
+
+                }
+                %>
+                <hr/>
+            </section>
+        <% }} %>
     </body>
 </html>
