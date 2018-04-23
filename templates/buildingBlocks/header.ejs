@@ -1,2 +1,4 @@
-<h3 id='<%= name.value %>'><%= name.value %></h3>
-<p class='description'><%- description.value %></p>
+<h3 id='<%= name %>'> <span <%- deprecated? "class='deprecated' title='Deprecated'" :""%>>
+    <%= name %>
+</span></h3>
+<%- include('description.ejs', locals) %>

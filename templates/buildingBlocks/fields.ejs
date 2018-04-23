@@ -2,14 +2,40 @@
 <div class='content'><%
 for (var i in fields){
     if (!fields.hasOwnProperty(i)) continue;
-
     let field = fields[i];
     %>
-    <p id='<%= name.value + "." + field.name.value %>'>
-        <span class='field'><%= field.name.value %></span>: 
-        <span class='name'><a href='#<%= field.type.name.value %>'><%= field.type.name.value %></a></span>
-    </p>
-    <p class='description'><%- field.description.value %></p>
+    <div class='block field'>
+        <p id='<%= name + "." + field.name %>' style="background: var(--light-shade);">
+            <span <%- field.deprecated? "class='fieldname deprecated' title='Deprecated'" : "class='fieldname'" %> ><%= field.name %></span>: 
+            <span class='name'><a href='#<%= field.basicType %>'><%= field.type %></a></span>
+        </p>
+        <%- include('description.ejs', field) %>
+        <%
+        if (field.arguments.length > 0){
+        %>
+            <table class="content"><tr>
+                <td style="vertical-align: top; font-size: small; padding-right: 5px">Arguments:</td>
+                <td><table class='arguments' >
+                    <tr><th>Type</th><th>Name</th><th>Description</th>
+                <%
+                for (var j in field.arguments){
+                    if (!field.arguments.hasOwnProperty(j)) continue;
+                    let argument = field.arguments[j];
+                    %>
+                    <tr>
+                        <td><b><a href='#<%= argument.basicType %>'><%= argument.type %></a></b></td>
+                        <td><b <%- argument.deprecated? "class='deprecated' title='Deprecated'" : "" %>><%= argument.name %></b></td>
+                        <td><%- include('description.ejs', argument) %></td>
+                    </tr>
+                <% 
+                } 
+                %>
+                </table></td>
+            </tr></table>
+        <%
+        }
+        %>
+    </div>
     <%
 }
 %></div>

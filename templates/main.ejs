@@ -2,21 +2,98 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><%= name %></title>
+        <link href="https://fonts.googleapis.com/css?family=Bitter:700|Poppins|Roboto" rel="stylesheet">
+        <title><%= apiName %></title>
+        <style name='fontImports'>
+            @font-face {
+                font-family: 'headFont';
+                font-style: normal;
+                font-weight: 700;
+                src: local('Bitter Bold'), local('Bitter-Bold'), url(https://fonts.gstatic.com/s/bitter/v12/rax_HiqOu8IVPmnzxKl8Axhf.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'headFont';
+                font-style: normal;
+                font-weight: 700;
+                src: local('Bitter Bold'), local('Bitter-Bold'), url(https://fonts.gstatic.com/s/bitter/v12/rax_HiqOu8IVPmnzxKl8DRhfo0s.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'sectionFont';
+                font-style: normal;
+                font-weight: 700;
+                src: local('Poppins Bold'), local('Poppins-Bold'), url(https://fonts.gstatic.com/s/poppins/v5/pxiByp8kv8JHgFVrLCz7Z1JlFc-K.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'sectionFont';
+                font-style: normal;
+                font-weight: 700;
+                src: local('Poppins Bold'), local('Poppins-Bold'), url(https://fonts.gstatic.com/s/poppins/v5/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'bodyFont';
+                font-style: italic;
+                font-weight: 400;
+                src: local('Open Sans Italic'), local('OpenSans-Italic'), url(https://fonts.gstatic.com/s/opensans/v15/mem6YaGs126MiZpBA-UFUK0Xdc1UAw.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'bodyFont';
+                font-style: italic;
+                font-weight: 400;
+                src: local('Open Sans Italic'), local('OpenSans-Italic'), url(https://fonts.gstatic.com/s/opensans/v15/mem6YaGs126MiZpBA-UFUK0Zdc0.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'bodyFont';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFW50bbck.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'bodyFont';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFVZ0b.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'bodyFont';
+                font-style: normal;
+                font-weight: 700;
+                src: local('Open Sans Bold'), local('OpenSans-Bold'), url(https://fonts.gstatic.com/s/opensans/v15/mem5YaGs126MiZpBA-UN7rgOXOhpOqc.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'bodyFont';
+                font-style: normal;
+                font-weight: 700;
+                src: local('Open Sans Bold'), local('OpenSans-Bold'), url(https://fonts.gstatic.com/s/opensans/v15/mem5YaGs126MiZpBA-UN7rgOUuhp.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+        </style>
         <style name='general'>
             :root {
                 --dark-shade: Gray;
                 --medium-shade: LightGray;
-                --light-shade: #f9f9f9;
+                --light-shade: #f0f0f0;
                 --color: Crimson;
                 --light-color: #f48aa0;
                 --dark-color: #8c0d26;
-                font-family: 'Tahoma';
+                font-family: 'bodyFont';
             }
 
             a {
                 text-decoration: none;
                 font-family: 'Calibri';
+            }
+            p {
+                margin-top: 0.5em;
+                margin-bottom: 0em;
             }
 
             section { 
@@ -29,16 +106,26 @@
                 background-color: var(--medium-shade);
                 border-width:0;
             }
+            hr.big {
+                height: 2px;
+                background-color: var(--dark-shade);
+            }
 
             h1{
-                color: var(--color)
+                color: var(--color);
+                font-family: 'headFont';
             }
             h2{
                 color: var(--color);
                 margin-left: -20px;
+                font-family: 'sectionFont';
+            }
+            h3{
+                margin-bottom: 0;
             }
             h4{
-                color: var(--dark-color)
+                color: var(--dark-color);
+                margin-bottom: 0;
             }
             h5{
                 line-height: 0em;
@@ -47,13 +134,49 @@
             }
 
             .name{
-                font-family: 'Courier New'
+                /*font-family: 'Courier New'*/
             }
-            .field{
+            .fieldname{
                 font-weight: bold
             }
             .content{
                 margin-left: 10px;
+            }
+            .block { 
+                margin-bottom: 10px;
+            }
+            .deprecated {
+                border-bottom: #606060 dashed 1px;
+                color: #606060;
+                font-style: italic;
+            }
+            .directives {
+                font-size: small;
+                margin-top: 5px;
+            }
+            .arguments .directives {
+                margin-top: 0px;
+            }
+
+            .field {
+                padding-left: 5px;
+            }
+
+            table.arguments, .arguments th, .arguments td {
+                border: 1px solid var(--medium-shade);
+                border-collapse: collapse;
+            }
+            .arguments{
+                font-size: small;
+                margin-top: 5px;
+            }
+            .arguments td, .arguments th{
+                padding: 5px;
+                vertical-align: top;
+            }
+            .arguments th{
+                background: var(--light-shade);
+                color: var(--dark-color)
             }
         </style>
         <style name='tooltip'>
@@ -82,6 +205,11 @@
                 opacity: 0;
                 transition: opacity 0.3s;
             }
+            .tooltip .bottom{
+                top: 100%;
+                left: 0;
+                transform: none;
+            }
 
             /* Tooltip arrow */
             .tooltip .tooltiptext::after {
@@ -105,7 +233,8 @@
         <style name='nav'>
             nav {
                 float: left;
-                position: fixed;
+                position: sticky;
+                top: 0px;
                 width: 200px;
                 margin-right: 10px;
                 z-index: 2;
@@ -143,13 +272,14 @@
     </head>
     <body>
         <header style='margin: 40px;'>
-            <h1><%= name %></h1>
-            <p><%= description %></p>
+            <h1><%= apiName %></h1>
+            <p><%= apiDescription %></p>
         </header>
         <nav>
+            <p style="font-size: smaller; text-align: center"><a href="#top">▲ Top ▲</a><p>
             <%
-            for (let kind in filter){
-                if (!filter.hasOwnProperty(kind)) continue;
+            for (let kind in order){
+                if (!order.hasOwnProperty(kind)) continue;
             %>
                 <details>
                     <summary>
@@ -157,16 +287,16 @@
                     </summary>
                     <ul>
                     <%
-                    let types = filter[kind](schema);
+                    let types = viewModel[kind];
                     for(let i=0; i<types.length; i++){
-                        let type = types[i].name.value;
-                        let desc = types[i].description.value;
-                        let desctx = types[i].description.text||"";
+                        let type = types[i].name;
+                        let desc = types[i].description;
+                        let desctxt = types[i].descriptionText;
                         const maxLength=20;
                         %>
                         <li class='tooltip'>
                             <a style='font-size: small' href='#<%= type%>'><%= type %></a>
-                            <span style='font-size: x-small'><%- desctx.length>maxLength?desctx.slice(0,maxLength-3)+'...':desctx %></span>
+                            <span style='font-size: x-small'><%- desctxt.length>maxLength?desctxt.slice(0,maxLength-3)+'...':desctxt %></span>
                             <span class='tooltiptext'><%- desc %></span>
                         </li>
                         <%
@@ -179,9 +309,9 @@
             %>
         </nav>
         <%
-        for (let kind in filter){
-            if (!filter.hasOwnProperty(kind)) continue;
-            let items = filter[kind](schema);
+        for (let kind in order){
+            if (!order.hasOwnProperty(kind)) continue;
+            let items = viewModel[kind];
             if (items.length>0) {
         %>
             <section name='<%= kind %>' id='<%= kind %>' class='kind'>
@@ -190,15 +320,20 @@
                 for(let i=0; i<items.length; i++){
                     let item = items[i];
                     try{
-                    %><%- include(kind+'.ejs', item) %><%
+                    %>
+                    <%- include(kind+'.ejs', item) %>
+                    <% if (i<items.length-1) {%>
+                    <hr/>
+                    <%
+                        }
                     }
                     catch(err){
+                        console.error(err);
                         %>No template<%
                     }
-
                 }
                 %>
-                <hr/>
+                <hr class="big"/>
             </section>
         <% }} %>
     </body>

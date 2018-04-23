@@ -1,0 +1,6 @@
+<%- include('buildingBlocks/header.ejs', locals) %>
+<p class="content"><b> Possible Types: </b>
+    <span> 
+    <%- types.map(type=> "<a href='#" + type.basicType + "'>" + type.type + "</a>").join(" | ") %>
+    </span>
+</p>

@@ -1,0 +1,15 @@
+<%- include('buildingBlocks/header.ejs', locals) %>
+
+<table class="content">
+    <% for (let i in values) {
+        if (!values.hasOwnProperty(i)) continue;
+
+        let value = values[i];
+        %>
+        <tr>
+            <td><li><b><%= value.name %></b></li></td>
+            <td> - <td>
+            <td><%= value.description %>
+        </tr>
+    <% } %>
+</table>

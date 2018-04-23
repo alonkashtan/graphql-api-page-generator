@@ -1,0 +1,28 @@
+<div>
+    <% if (locals.deprecated) { %>
+        <div class='directives'>
+            <b style='color: red'>Deprecated</b>:
+                <%= deprecated %>
+        </div>
+    <% } if (locals.description){ %>
+        <div class='description'><%- description %></div>
+    <% } if (locals.range) { %>
+        <div class='directives'>
+            <b>Range:</b>
+                <%= "[" + (range.min || "-∞") + "," + (range.max || "∞") + "]"; %>
+        </div>
+    <% } if (locals.length) { %>
+        <div class='directives'>
+            <b>Length:</b>
+                <%= length.sort(length.level?length.level:1).
+                        map(length => "["+(length.min || "0") + "," + (length.max || "∞") + "]").
+                        join("=>"); %>
+        </div>
+    <% } if (locals.mask) { %>
+        <div class='directives'>
+            <b>Mask:</b>
+                <%= (mask.simpleMask? "Simple mask: " + mask.simpleMask + " "  : "") + 
+                    (mask.regExp? "Regular Expression: " + mask.regExp  : ""); %>
+        </div>
+    <% } %>
+</div>
