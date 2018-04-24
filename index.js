@@ -1,132 +1,81 @@
 #!/usr/bin/env node
-
-const ejs = require('ejs');
 const fs = require('fs')
 const graphql = require('graphql');
-const elementsTypeFilter = require('./elementsTypeFilter.js')
-const sanitizer = require('./schemaSanitizer')
-const preprocessor = require('./schemaPreprocessor');
-const ViewModel = require('./view_model/viewModel');
+const yargs = require('yargs');
+const reqprom = require('request-promise');
 
-// schema. TODO: get file
-let schemaText =`
-    """
-    Represents a <b>year</b><br/>
-    And more
-    """
-    scalar Year
-    
-    "A named object <img src='hello'/> <h1>definition</h1>"
-    interface Named {
-        "name of the object"
-        name(num: Int! @deprecated(reason: "use family instead")): String!
-    }
-    
-    "Represents a student. This is a very important object for understanding how this repo works af therefore needs a very very long description so we know it's important"
-    type Student implements Named  @deprecated (reason: "yup") {
-        "The name of the student"
-        name(num: Int!): String! @deprecated(reason: "Bad idea") @range(min: 7)
-        "Current age"
-        age: Year 
-        "The average grade"
-        grade: Float
-    }
+const apiPageBuilder = require('./apiPageBuilder');
 
-    "Course difficulty"
-    enum Difficulty{
-        "Easier then eating pizza"
-        EASY, 
-        "Harder then eating just one slice of pizza"
-        HARD
-    }
-    
-    "A course"
-    type Course implements Named {
-        "The name of the course"
-        name(num: Int!): String!
-        "All the students that study the course"
-        students(
-            "Show only students above this grade"
-            minimumGrade: Int): [Student]
 
-        difficulty: Difficulty
+let args = yargs
+    .usage('$0 <outputfile>', 'writes API as HTML from the uri to the given output file', (yargs) =>{
+        yargs.positional('outputfile', {
+            describe: 'name (and path) of file to which the API HTML will be saved',
+            default: 'API.html'
+        })
+    })
+    .options({
+        'type': {
+            choices: ["introspection", "file"],
+            alias: 't',
+            demandOption: true,
+            describe: "choose 'file' for local file or 'introspection' for introspecting a server",
+        },
+        'uri' : {
+            describe: "the path to the graphql file or the URL to the GraphQL service",
+            alias: 'u',
+            demandOption: true,
+            type: 'string'
+        },
+        'name' : {
+            describe: "name of the API",
+            alias: 'n',
+            demandOption: true,
+            type: 'string'
+        },
+        'description': {
+            describe: "description of the API",
+            alias: 'd',
+            demandOption: false,
+            type: 'string'
+        }
     }
-    
-    "desc desc"
-    union UniversityObject = Student | Course
-    
-    "desc desc"
-    type Query{
-        "get all students"
-        students(first: Int @range(max: 500),
-            "Starts with this letter"
-            letter: String! @length(min:1, max: 1)
-        ): [Student]
-        "get all courses"
-        courses: [Course]
-        "desc desc"
-        namedObjects: [Named]
-        "desc desc"
-        universityThingies: [UniversityObject]
-    }
-    
-    "Student input info"
-    input InputStudent{
-        "Student name"
-        name: String
-    }
+).argv;
 
-    "desc desc"
-    type Mutation{
-        "Add a student. Returns ID of the student"
-        addStudent("Student name" name: String, x: [InputStudent]): Int
-    }
-`;
+let apiName = args.name;
+let apiDescription = args.description;
+let outputFile = args.outputfile;
 
-// TODO: get from arguments
-let apiName = 'Example API';
-let apiDescription = 'This is the best API in the neighborhood.';
-let outputFile = 'out.html';
-
-let gqlSchema = graphql.parse(schemaText);
-let AST = JSON.stringify(gqlSchema,null,4);
-fs.writeFileSync('out.json', AST);
-
-let schema = {
-    index: {}
+// schema
+if (args.type === "file"){
+    let schemaText = fs.readFileSync(args.uri, 'utf-8');
+    apiPageBuilder.buildAPIPage(graphql.parse(schemaText), apiName, apiDescription, outputFile);
 }
-AST = JSON.parse(AST); //The double parse eliminates some strange tags that have loops in the references when the AST was built
+else if (args.type === "introspection"){
+    let query = graphql.introspectionQuery;
+    
+    let options = {
+        method: 'POST',
+        uri: args.uri,
+        body: {
+            query: query
+        },
+        json: true
+    };
 
-sanitizer(AST);
-fs.writeFileSync('out.json', JSON.stringify(AST,null, 4));
+    // if protocol is not specified, use http
+    if (!options.uri.includes("://"))
+        options.uri="http://"+options.uri;
 
-// prepare by type
-AST.definitions.forEach(function(item){
-    if (!schema[item.kind]) schema[item.kind]=[];
-
-    schema[item.kind].push(item);
-    schema.index[item.name.value] = item.kind;
-});
-
-// Add implementors to interface definitions
-preprocessor.addImplementors(
-    // for all types, including Query and Mutation (although not very likely they will implement an interface)
-    elementsTypeFilter.Types(schema).concat(elementsTypeFilter.Query(schema), elementsTypeFilter.Mutation(schema)), 
-    elementsTypeFilter.Interfaces(schema));
-
-let templateParam = {
-    viewModel: new ViewModel(schema, graphql.buildASTSchema(gqlSchema)),
-    apiName: apiName,
-    apiDescription: apiDescription,
-    order: elementsTypeFilter
+    reqprom(options)
+        .then(function(body){
+            let schema=graphql.buildClientSchema(body.data);
+            schema = graphql.printSchema(schema);
+            apiPageBuilder.buildAPIPage(graphql.parse(schema), apiName, apiDescription, outputFile);
+        })
+        .catch(function(err){
+            console.error("Could not retrieve introspection query: " + err);
+            process.exit(2);
+        })
 }
 
-ejs.renderFile('./templates/main.ejs', templateParam,null,function(err,str){
-    if (err){
-        console.error("Could not render: " + err);
-        return;
-    }
-    fs.writeFileSync(outputFile, str);
-});
-
-process.exit()

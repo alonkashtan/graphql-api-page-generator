@@ -1,7 +1,7 @@
 {
   "name": "graphql-api-page-generator",
   "version": "1.0.0",
-  "description": "Generates a API page from a GraphQL schema that is intended for public display.",
+  "description": "Generates an API page from a GraphQL schema that is intended for public display.",
   "main": "index.js",
   "bin": {
     "snippet": "./index.js"
@@ -20,6 +20,10 @@
   "dependencies": {
     "ejs": "^2.5.8",
     "graphql": "^0.13.2",
-    "sanitize-html": "^1.18.2"
-  }
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "sanitize-html": "^1.18.2",
+    "yargs": "^11.0.0"
+  },
+  "repository": "github:alonkashtan/graphql-api-page-generator"
 }

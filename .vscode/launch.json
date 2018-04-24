@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}\\index.js",
+            "args": [
+                // "-t","introspection","-u","localhost:4000/graphql","-n", "Example API","-d", "Description", "out.html"
+                "-t","introspection","-u","http://localhost:4000/introspect","-n", "Example API","-d", "Description", "out.html"
+                // "-t","file","-u","schema.graphql","-n", "Example API","-d", "Description", "out.html"
+            ]
+        }
+    ]
+}
