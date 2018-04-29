@@ -95,7 +95,7 @@ type Student @deprecated (reason: "University is closing") {
     grade(onlyLastYear: Float @deprecated(reason: "not supported anymore")): Int
 }
 ```
-Result: 
+Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-deprecated.png)
 ### The `@range` directive
 ```GraphQL
@@ -118,7 +118,7 @@ type Student {
     grade: Int @range(min: 0, max: 100)
 }
 ```
-Result: 
+Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-range.png)
 ### The `@length` directive
 ```GraphQL
@@ -141,7 +141,7 @@ type Query {
     classes: [Class] @length(min: 0, max: 100)
 }
 ```
-Result: 
+Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-length.png)
 
 ### The `@mask` directive
@@ -160,5 +160,5 @@ type Student {
     id: String @mask(regExp: "^stud[0-9]{1,10}$")
 }
 ```
-Result: 
+Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-mask.png)
