@@ -32,7 +32,8 @@ module.exports = {
             if (!schema[item.kind]) schema[item.kind]=[];
     
             schema[item.kind].push(item);
-            schema.index[item.name.value] = item.kind;
+            if (item.name)
+                schema.index[item.name.value] = item.kind;
         });
     
         // Add implementors to interface definitions

@@ -6,6 +6,7 @@ const enumDef = "EnumTypeDefinition";
 const unionDef = "UnionTypeDefinition";
 const inputDef = "InputObjectTypeDefinition";
 const scalarDef = "ScalarTypeDefinition";
+const schemaDef = "SchemaDefinition";
 
 /**
  * 
@@ -13,7 +14,6 @@ const scalarDef = "ScalarTypeDefinition";
  * @param {string} kind 
  */
 function filterByKind(elements, kind){
-    //return elements.filter(element=>elements.kind==kind);
     return elements[kind]||[];
 }
 
@@ -21,25 +21,42 @@ function filterFactory(kind){
     return elements=>filterByKind(elements, kind);
 }
 
+function getOperationType(elements, name){
+    let schema = filterByKind(elements, schemaDef).find(_=>true);
+    if (!schema) return undefined;
+    let operation = schema.operationTypes.
+                            find(o=>o.operation.toLowerCase() === name);
+    
+    return operation? operation.type.name.value : undefined;
+}
+
 module.exports ={
     /**
     * @param {DefinitionNode[]} elements AST elements
     */ 
     Query: function(elements) {
-        return [filterByKind(elements, objectDef)
-                .filter(element=>element.name.value==queryName)
-                .find(element=>true)];
+        let queryType = getOperationType(elements, "query");
+        return queryType
+            ? [filterByKind(elements, objectDef)
+                .filter(element=>element.name.value==queryType)
+                .find(element=>true)]
+            : [];
     },
     Mutation: function(elements) {
-        return [filterByKind(elements, objectDef)
-                .filter(element=>element.name.value==mutationName)
-                .find(element=>true)];
+        let mutationType = getOperationType(elements, "mutation");
+        return mutationType
+            ? [filterByKind(elements, objectDef)
+                .filter(element=>element.name.value==mutationType)
+                .find(element=>true)]
+            : [];
     },
     Types: function(elements) {
+        let queryType = getOperationType(elements, "query");
+        let mutationType = getOperationType(elements, "mutation");
         return filterByKind(elements, objectDef)
                 .filter(
-                    element=>element.name.value!=mutationName && 
-                    element.name.value!=queryName);
+                    element=>element.name.value!=queryType && 
+                    element.name.value!=mutationType);
     },
     Interfaces: filterFactory(interfaceDef),
     Enums: filterFactory(enumDef),

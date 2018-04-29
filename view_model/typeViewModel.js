@@ -15,7 +15,7 @@ function getType(node, gqlAST){
     let type = graphql.typeFromAST(gqlAST, node);
     return {
         type: type.toString(),
-        basicType: type.ofType? type.ofType.toString() : type.toString()
+        basicType: type.ofType? type.ofType : type.toString()
     }
 }
 
@@ -102,6 +102,10 @@ class AbstractFieldViewModel extends AbstractTypeViewModel{
 
     get range(){
         return helpers.getDirective(this.ast, 'range');
+    }
+
+    get mask(){
+        return helpers.getDirective(this.ast, 'mask');
     }
 
     get length(){

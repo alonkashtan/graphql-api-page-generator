@@ -10,9 +10,10 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\index.js",
             "args": [
-                // "-t","introspection","-u","localhost:4000/graphql","-n", "Example API","-d", "Description", "out.html"
-                "-t","introspection","-u","http://localhost:4000/introspect","-n", "Example API","-d", "Description", "out.html"
-                // "-t","file","-u","schema.graphql","-n", "Example API","-d", "Description", "out.html"
+                // "from-url","out.html","localhost:4000/graphql","Example API","This is a great API"
+                // "from-url","out.html","http://localhost:4000/introspect","Example API","This is a great API"
+                "from-url","out.html","http://graphql.communitygraph.org/graphql/","Example API","This is a great API"
+                // "from-file","out.html","schema.graphql","Example API", "This is a description of a great API"
             ]
         }
     ]

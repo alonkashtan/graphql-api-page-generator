@@ -1,15 +1,23 @@
 <%- include('buildingBlocks/header.ejs', locals) %>
 
-<table class="content">
+<table class="content enums">
     <% for (let i in values) {
         if (!values.hasOwnProperty(i)) continue;
 
         let value = values[i];
         %>
         <tr>
-            <td><li><b><%= value.name %></b></li></td>
+            <td><li><b <%- value.deprecated? "class='deprecated' title='Deprecated'" : "" %> ><%= value.name %></b></li></td>
             <td> - <td>
-            <td><%= value.description %>
+            <td>
+                <%= value.description %>
+                <% if (value.deprecated) { %>
+                    <span class='directives'>
+                        <b style='color: red'>Deprecated</b>:
+                        <%= value.deprecated %>
+                    </span>
+                <% } %>
+            </td>
         </tr>
     <% } %>
 </table>

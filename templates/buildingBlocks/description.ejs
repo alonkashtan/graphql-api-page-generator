@@ -21,8 +21,8 @@
     <% } if (locals.mask) { %>
         <div class='directives'>
             <b>Mask:</b>
-                <%= (mask.simpleMask? "Simple mask: " + mask.simpleMask + " "  : "") + 
-                    (mask.regExp? "Regular Expression: " + mask.regExp  : ""); %>
+                <%- (mask.simpleMask? "Simple mask: <code>" + mask.simpleMask + "</code> "  : "") + 
+                    (mask.regExp? "Regular Expression: <code>" + mask.regExp +"</code>"  : ""); %>
         </div>
     <% } %>
 </div>
