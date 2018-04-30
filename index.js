@@ -78,8 +78,6 @@ let args = yargs
 
                     let schema=graphql.buildClientSchema(body.data);
                     schema = graphql.printSchema(schema);
-                    fs.writeFileSync('../self.json', JSON.stringify(body,null,4), 'utf-8')
-                    fs.writeFileSync('../self.graphql', schema, 'utf-8')
                     apiPageBuilder.buildAPIPage(graphql.parse(schema), args.apiname, args.description, args.outputfile);
             })
         }
