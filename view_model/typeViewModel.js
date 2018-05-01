@@ -1,5 +1,10 @@
 const graphql = require('graphql');
 const helpers = require('./helpers');
+const sanitize = require('sanitize-html');
+const md = require('markdown-it')({
+    html: true,
+    linkify: true
+  });
 
 /**
  * Returns names of type and basic type for a node.
@@ -8,15 +13,14 @@ const helpers = require('./helpers');
  *  type: "[string!]",
  *  basicType: "string"
  * }
- * @param {DocumentNode} node the node of this type in the AST
- * @param {GraphQLSchema} gqlAST 
+ * @param {*} type the node of this type in the schema
  */
-function getType(node, gqlAST){
-    let type = graphql.typeFromAST(gqlAST, node);
-    return {
-        type: type.toString(),
-        basicType: type.ofType? type.ofType : type.toString()
+function getBasicType(type){
+    
+    if (type.ofType) {
+        return getBasicType(type.ofType);
     }
+    return type.toString();
 }
 
 /**
@@ -24,12 +28,13 @@ function getType(node, gqlAST){
  */
 class AbstractTypeViewModel {
     /**
-     * 
-     * @param {DocumentNode} typeAST the AST for this type definition
+     * @constructor
+     * @param {graphql.GraphQLSchema} completeSchema GraphQL schema as produced by {@link graphql.buildSchema}.
+     * @param {graphql.GraphQLNamedType} itemSchema the part of {@link #completeSchema} that represents the current item
      */
-    constructor(typeAST, gqlAST){
-        this.ast = typeAST
-        this.gqlAST = gqlAST;
+    constructor(itemSchema, completeSchema){
+        this.itemSchema = itemSchema
+        this.completeSchema = completeSchema;
 
         helpers.makeGettersEnumerable(this);
     }
@@ -39,19 +44,23 @@ class AbstractTypeViewModel {
     }
 
     get name(){
-        return this.ast.name.value;
+        return this.itemSchema.name;
     }
 
     get description(){
-        return graphql.getDescription(this.ast);
+        return this.itemSchema.description
+            ? md.renderInline(sanitize(this.itemSchema.description))
+            : null;
     }
 
     get descriptionText(){
-        return this.ast.description? this.ast.description.text || "" : "";
+        return this.itemSchema.description
+            ? sanitize(md.render(this.itemSchema.description), { allowedTags: [] })
+            : null;
     }
 
     get deprecated(){
-        return helpers.deprecated(this.ast, this.kind)
+        return helpers.deprecated(this.itemSchema, this.kind)
     }
 }
 
@@ -67,7 +76,8 @@ class TypeViewModel extends AbstractTypeViewModel {
     }
 
     get fields(){
-        return this.ast.fields.map(field => new FieldViewModel(field, this.gqlAST));
+        return helpers.mapToArray(this.itemSchema.getFields())
+                    .map(field => new FieldViewModel(field, this.completeSchema));
     }
 }
 
@@ -77,7 +87,8 @@ class InterfaceViewModel extends TypeViewModel {
     }
 
     get implementors(){
-        return this.ast.implementors;
+        return this.completeSchema.getPossibleTypes(this.itemSchema)
+            .map(type => type.name);
     }
 }
 
@@ -87,29 +98,30 @@ class InputViewModel extends TypeViewModel {
     }
 
     get fields(){
-        return this.ast.fields.map(field => new InputFieldViewModel(field, this.gqlAST)); 
+        return helpers.mapToArray(this.itemSchema.getFields())
+                    .map(field => new InputFieldViewModel(field, this.completeSchema)); 
     }
 }
 
 class AbstractFieldViewModel extends AbstractTypeViewModel{
     get type(){
-        return getType(this.ast.type, this.gqlAST).type
+        return this.itemSchema.type.toString();
     }
     
     get basicType(){
-        return getType(this.ast.type, this.gqlAST).basicType 
+        return getBasicType(this.itemSchema.type);
     }
 
     get range(){
-        return helpers.getDirective(this.ast, 'range');
+        return helpers.getDirective(this.itemSchema, 'range');
     }
 
     get mask(){
-        return helpers.getDirective(this.ast, 'mask');
+        return helpers.getDirective(this.itemSchema, 'mask');
     }
 
     get length(){
-        return helpers.getDirectives(this.ast, 'length');
+        return helpers.getDirectives(this.itemSchema, 'length');
     }
 }
 
@@ -119,7 +131,7 @@ class FieldViewModel extends AbstractFieldViewModel {
     }
 
     get arguments(){
-        return this.ast.arguments.map(arg => new ArgumentViewModel(arg, this.gqlAST));
+        return this.itemSchema.args.map(arg => new ArgumentViewModel(arg, this.completeSchema));
     }
 }
 
@@ -141,7 +153,7 @@ class EnumViewModel extends AbstractTypeViewModel {
     }
 
     get values(){
-        return this.ast.values.map(value => new EnumValueViewModel(value, this.gqlAST));
+        return this.itemSchema.getValues().map(value => new EnumValueViewModel(value, this.completeSchema));
     }
 }
 
@@ -157,10 +169,11 @@ class UnionViewModel extends AbstractTypeViewModel{
     }
 
     get types() {
-        return this.ast.types.map(type =>  ({
-            type: getType(type, this.gqlAST).type,
-            basicType: getType(type, this.gqlAST).type
-        }))
+        return this.completeSchema.getPossibleTypes(this.itemSchema)
+            .map(type => ({
+                type: type.name,
+                basicType: getBasicType(type)
+            }));
     }
 }
 

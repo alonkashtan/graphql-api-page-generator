@@ -11,8 +11,8 @@
             "program": "${workspaceFolder}\\index.js",
             "args": [
                 // "from-url","out.html","localhost:4000/graphql","Example API","This is a great API"
-                // "from-url","out.html","http://localhost:4000/introspect","Example API","This is a great API"
-                "from-url","out.html","http://graphql.communitygraph.org/graphql/","Example API","This is a great API"
+                // "from-url","out.html","http://localhost:4000/introspect","GitHub Developer's API","This is a great API."
+                "from-url","out.html","http://graphql.communitygraph.org/graphql/","GraphQL Community Graph","This is a great API"
                 // "from-file","out.html","schema.graphql","Example API", "This is a description of a great API"
             ]
         }

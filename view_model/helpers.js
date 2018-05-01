@@ -1,3 +1,5 @@
+const graphql = require('graphql');
+
 function directiveToArgs(directive){
     let args = {};
     directive.arguments.forEach(arg => {
@@ -10,12 +12,12 @@ module.exports = {
     /**
      * Returns deprecation reason or false if not.
      * 
-     * @param {DocumentNode} ast the node's AST schema
+     * @param {graphql.GraphQLNamedType} itemSchema the node's schema
      * @param {string} kind kind of node (e.g. Type/Scalar/Object etc). Used for default deprecation message
      * @returns {(string|boolean)} a string describing the reason that this node is deprecated or false if not deprecated.
      */
-    deprecated: function(ast, kind) {
-        let deprecated = this.getDirective(ast, "deprecated");
+    deprecated: function(itemSchema, kind) {
+        let deprecated = this.getDirective(itemSchema, "deprecated");
         if (!deprecated) return false;
 
         return deprecated.reason || 'This ' + kind + ' is deprecated';
@@ -23,12 +25,14 @@ module.exports = {
     /**
      * Returns the arguments of a directive if it exists, or false if not.
      * 
-     * @param {DocumentNode} ast the node's AST schema
-     * @param {string} directiveName the name of the directive to look for
+     * @param {graphql.GraphQLNamedType} itemSchema the node's schema
+     * @param {string} kind kind of node (e.g. Type/Scalar/Object etc). Used for default deprecation message
      * @returns {(object|boolean)} the arguments of the directive, or false if directive not exists.
      */
-    getDirective: function(ast, directiveName){
-        let directive = ast.directives.find(dir=>dir.name.value.toLowerCase() === directiveName.toLowerCase());
+    getDirective: function(itemSchema, directiveName){
+        if (!itemSchema.astNode) return false; // this happens in built-in scalars, such as Int and Float
+
+        let directive = itemSchema.astNode.directives.find(dir=>dir.name.value.toLowerCase() === directiveName.toLowerCase());
         if (!directive) return false;
         
         return directiveToArgs(directive);
@@ -36,12 +40,13 @@ module.exports = {
     /**
      * Returns the arguments of all instances of directive if any, or false if not.
      * 
-     * @param {DocumentNode} ast the node's AST schema
-     * @param {string} directiveName the name of the directive to look for
+     * @param {graphql.GraphQLNamedType} itemSchema the node's schema
+     * @param {string} kind kind of node (e.g. Type/Scalar/Object etc). Used for default deprecation message
      * @returns {(object[]|boolean)} the arguments of the directive, or false if directive not exists.
      */
-    getDirectives: function(ast, directiveName){
-        let directives = ast.directives.filter(dir=>dir.name.value.toLowerCase() === directiveName.toLowerCase());
+    getDirectives: function(itemSchema, directiveName){
+        if (!itemSchema.astNode) return false; // this happens in built-in scalars, such as Int and Float
+        let directives = itemSchema.astNode.directives.filter(dir=>dir.name.value.toLowerCase() === directiveName.toLowerCase());
         if (!directives || directives.length == 0) return false;
         
         return directives.map(directive => directiveToArgs(directive));
@@ -60,5 +65,14 @@ module.exports = {
         }
         
         this.makeGettersEnumerable(prototype);
+    },
+    /**
+     * Flattens a object that is used as a map to an array of values, skipping any key that starts with '__' (i.e. private field).
+     * @param {*} map the map
+     * @returns {*[]} the values of the maps.
+     */
+    mapToArray: function(map){
+        let keys = Object.getOwnPropertyNames(map).filter(name => !name.startsWith('__'));
+        return keys.map(name => map[name]);
     }
 }

@@ -3,7 +3,7 @@ A command line tool for generating an API page from a GraphQL schema that is int
 
 [Directives](#supported-directives) can be used for extra information about the schema. 
 
-HTML descriptions [are supported](#html-description-support)! 
+HTML and Markdown descriptions [are supported](#html-markdown-description-support)! 
 
 ![Screenshot](/docs/screenshot.png)
 
@@ -65,11 +65,12 @@ For example:
 
     gqlapi from-url out.html "http://graphql.communitygraph.org/graphql/" "Example API" "This is a description of a great API"
 
-## HTML description support
-The description of every item kind may contain HTML tags that will be embedded into the generated HTML file. 
+## HTML & Markdown description support
+The description will be rendered as Markdown (with [markdown-it](https://github.com/markdown-it/markdown-it)). 
 
+The description of every item kind may contain HTML tags that will be embedded into the generated HTML file.
 Note, however, that the HTML is sanitized for security purpose.
-For a complete list of allowed tags and attributes, see the [sanitize-html docs](https://github.com/punkave/sanitize-html#what-are-the-default-options)
+For a complete list of allowed tags and attributes, see the [sanitize-html docs](https://github.com/punkave/sanitize-html#what-are-the-default-options).
 
 ## Supported directives
 **GraphQL API Page Generator** is supporting directives that allows the schema publisher to provide extra information about the API behavior.

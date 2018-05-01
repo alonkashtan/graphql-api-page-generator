@@ -97,7 +97,7 @@
             }
 
             section { 
-                margin-left: 240px;
+                margin-left: 270px;
                 margin-right: 40px;
             }
 
@@ -239,7 +239,7 @@
                 float: left;
                 position: sticky;
                 top: 0px;
-                width: 200px;
+                width: 230px;
                 margin-right: 10px;
                 z-index: 2;
             }
@@ -282,28 +282,34 @@
         <nav>
             <p style="font-size: smaller; text-align: center"><a href="#top">▲ Top ▲</a><p>
             <%
-            for (let kind in order){
-                if (!order.hasOwnProperty(kind)) continue;
-            %>
-                <details>
-                    <summary>
-                    <a href='#<%= kind %>'><%= kind %></a>
-                    </summary>
-                    <ul>
-                    <%
-                    let types = viewModel[kind];
-                    for(let i=0; i<types.length; i++){
-                        let type = types[i].name;
-                        let desc = types[i].description;
-                        let desctxt = types[i].descriptionText;
-                        const maxLength=20;
-                        %>
-                        <li class='tooltip'>
-                            <a style='font-size: small' href='#<%= type%>'><%= type %></a>
-                            <span style='font-size: x-small'><%- desctxt.length>maxLength?desctxt.slice(0,maxLength-3)+'...':desctxt %></span>
-                            <span class='tooltiptext'><%- desc %></span>
-                        </li>
+            let order = viewModel.Order;
+            for (let i in order){
+                if (!order.hasOwnProperty(i)) continue;
+                let kind = order[i];
+                let types = viewModel[kind];
+                if (types.length > 0){
+                %>
+                    <details>
+                        <summary>
+                        <a href='#<%= kind %>'><%= kind %></a>
+                        </summary>
+                        <ul>
                         <%
+                        for(let i=0; i<types.length; i++){
+                            let type = types[i].name;
+                            let desc = types[i].description;
+                            let desctxt = types[i].descriptionText;
+                            const maxLength=20;
+                            %>
+                            <li class='tooltip'>
+                                <div style='text-overflow: ellipsis; white-space: nowrap; width: inherit; overflow: hidden'>
+                                    <a style='font-size: small' href='#<%= type%>'><%= type %></a>
+                                    <span style='font-size: x-small;'><%- desctxt %></span>
+                                </div>
+                                <span class='tooltiptext'><%- desc %></span>
+                            </li>
+                            <%
+                        }
                     }
                     %> 
                     </ul>
@@ -313,8 +319,9 @@
             %>
         </nav>
         <%
-        for (let kind in order){
-            if (!order.hasOwnProperty(kind)) continue;
+        for (let i in order){
+            if (!order.hasOwnProperty(i)) continue;
+            let kind = order[i];
             let items = viewModel[kind];
             if (items.length>0) {
         %>
@@ -333,7 +340,6 @@
                     }
                     catch(err){
                         console.error(err);
-                        %>No template<%
                     }
                 }
                 %>

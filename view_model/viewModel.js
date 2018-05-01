@@ -16,92 +16,98 @@ const InputViewModel = require('./typeViewModel').InputViewModel;
 class ViewModel {
     /**
      * @constructor
-     * @param {*} schema AST nodes indexed by kind
-     * @param {*} gqlAST AST schema as produced by {@link graphql.parse}.
+     * @param {graphql.GraphQLSchema} schema GraphQL schema as produced by {@link graphql.buildSchema}.
      */
-    constructor(schema, gqlAST) {
+    constructor(schema) {
         this.schema = schema;
-        this.gqlAST = gqlAST;
+        this._types = helpers.mapToArray(schema.getTypeMap());
 
         helpers.makeGettersEnumerable(this);
+    }
+
+    /**
+     * @returns {string[]} the order in which the elements should be displayed.
+     *      These strings match the name of the getters of this class.
+     */
+    get Order(){
+        return ["Query", "Mutation", "Subscription", "Types", "Interfaces",
+                "Enums", "Unions", "Input Types", "Scalars"];
+    }
+
+    /**
+     * 
+     * @param {string} type 
+     * @returns {graphql.GraphQLNamedType[]}
+     */
+    _getObjectsOfType(type) {
+        return this._types.filter(item => item.constructor.name === type);
     }
 
     /**
      * @returns {TypeViewModel[]} array with a single query type.
      */
     get Query() {
-        return filter.Query(this.schema).map(type => new TypeViewModel(type, this.gqlAST));
+        return this.schema.getQueryType()? [new TypeViewModel(this.schema.getQueryType(), this.schema)] : [];
     }
 
     /**
      * @returns {TypeViewModel[]} array with a single mutation type.
      */
     get Mutation() {
-        return filter.Mutation(this.schema).map(type => new TypeViewModel(type, this.gqlAST));
+        return this.schema.getMutationType()? [new TypeViewModel(this.schema.getMutationType(), this.schema)] : [];
+    }
+
+    /**
+     * @returns {TypeViewModel[]} array with a single subscription type.
+     */
+    get Subscription() {
+        return this.schema.getSubscriptionType()? [new TypeViewModel(this.schema.getMutationType(), this.schema)] : [];
     }
 
     /**
      * @returns {TypeViewModel[]} array with a all types (except Query and Mutation).
      */
     get Types() {
-        return filter.Types(this.schema).map(type => new TypeViewModel(type, this.gqlAST));
+        let excludedTypes = this.Query.concat(this.Mutation, this.Subscription);
+        return this._getObjectsOfType("GraphQLObjectType")
+            .filter(item=> !excludedTypes.some(exl => exl.name === item.name))
+            .map(type => new TypeViewModel(type, this.schema));
     }
 
     /**
      * @returns {InterfaceViewModel[]} array with a all interfaces
      */
     get Interfaces() {
-        return filter.Interfaces(this.schema).map(type => new InterfaceViewModel(type, this.gqlAST));
+        return this._getObjectsOfType("GraphQLInterfaceType").map(type => new InterfaceViewModel(type, this.schema));
     }
 
     /**
      * @returns {EnumViewModel[]} array with a all enums
      */
     get Enums() {
-        return filter.Enums(this.schema).map(type => new EnumViewModel(type, this.gqlAST));
+        return this._getObjectsOfType("GraphQLEnumType").map(type => new EnumViewModel(type, this.schema));
     }
 
     /**
      * @returns {UnionViewModel[]} array with a all union types
      */
     get Unions() {
-        return filter.Unions(this.schema).map(type => new UnionViewModel(type, this.gqlAST));
+        return this._getObjectsOfType("GraphQLUnionType").map(type => new UnionViewModel(type, this.schema));
     }
 
     /**
      * @returns {InputViewModel[]} array with a all input types
      */
     get "Input Types"(){
-        return filter["Input Types"](this.schema).map(type => new InputViewModel(type, this.gqlAST));
+        return this._getObjectsOfType("GraphQLInputObjectType").map(type => new InputViewModel(type, this.schema));
     }
 
     /**
      * @returns {ScalarViewModel[]} array with a all scalars
      */
     get Scalars(){
-        return filter.Scalars(this.schema).map(type => new ScalarViewModel(type, this.gqlAST));
+        return this._getObjectsOfType("GraphQLScalarType").map(type => new ScalarViewModel(type, this.schema));
     }
 }
 
 module.exports = ViewModel;
-/*module.exports = class {
-    constructor(schema, gqlAST) {
-        let viewModel = new ViewModel(schema, gqlAST);
-        for (let prop in viewModel){
-            this[prop] = viewModel[prop];
-        }
-    }
-}*/
-
-
-/*class {
-    // This class handles a bug in EJS that prevents it from working with ES6 class with
-    constructor(schema, gqlAST) {
-        let viewModel = new ViewModel(schema, gqlAST);
-        let props = Object.getOwnPropertyNames(Object.getPrototypeOf(viewModel));
-        for (let i in props){
-            let prop = props[i];
-            this[prop] = viewModel[prop];
-        }
-    }
-}*/

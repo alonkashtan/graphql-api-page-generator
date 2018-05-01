@@ -9,6 +9,11 @@ const request = require('request');
 
 const apiPageBuilder = require('./apiPageBuilder');
 
+const file="FILE";
+const url="URL";
+
+let command;
+
 let args = yargs
     .usage('Usage: $0 <from-file|from-url> <options>')
     .strict()
@@ -32,10 +37,7 @@ let args = yargs
                 type: 'string'
             })
         },
-        (args) => {
-            let schemaText = fs.readFileSync(args.path, 'utf-8');
-            apiPageBuilder.buildAPIPage(graphql.parse(schemaText), args.apiname, args.description, args.outputfile);
-        }
+        (args) => {command = file}
     )
     .command('from-url <outputfile> <url> <apiname> [description]', 'Writes API as HTML from a live GraphQL server (via introspection) to the given output file', 
         (yargs) =>{
@@ -56,33 +58,39 @@ let args = yargs
                 type: 'string'
             })
         },
-        (args) => {
-            let query = graphql.introspectionQuery;
-
-            // if protocol is not specified, use http
-            if (!args.url.includes("://"))
-                args.url="http://"+args.url;
-
-            request(args.url, {
-                    body: {
-                        query: query
-                    },
-                    json: true,
-                    method: 'POST'
-                }, 
-                (err, res, body)=>{
-                    if (err) {
-                        console.error("Could not retrieve introspection query: " + err);
-                        process.exit(2);
-                    }
-
-                    let schema=graphql.buildClientSchema(body.data);
-                    schema = graphql.printSchema(schema);
-                    apiPageBuilder.buildAPIPage(graphql.parse(schema), args.apiname, args.description, args.outputfile);
-            })
-        }
+        (args) => {command = url}
     )
     .demandCommand()
     .help()
     .argv;
 
+if (command===file) {
+    let schemaText = fs.readFileSync(args.path, 'utf-8');
+    apiPageBuilder.buildAPIPage(graphql.buildSchema(schemaText), args.apiname, args.description, args.outputfile);
+    process.exit();
+}
+if (command===url){
+    let query = graphql.introspectionQuery;
+
+    // if protocol is not specified, use http
+    if (!args.url.includes("://"))
+        args.url="http://"+args.url;
+
+    request(args.url, {
+            body: {
+                query: query
+            },
+            json: true,
+            method: 'POST'
+        }, 
+        (err, res, body)=>{
+            if (err) {
+                console.error("Could not retrieve introspection query: " + err);
+                process.exit(2);
+            }
+
+            let schema=graphql.buildClientSchema(body.data);
+            apiPageBuilder.buildAPIPage(schema, args.apiname, args.description, args.outputfile);
+            process.exit();
+    })
+}
