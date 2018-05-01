@@ -159,7 +159,7 @@ Used to describe the valid values of a string field or argument.
 Example:
 ```GraphQL
 type Student {
-"Identifier of the student as supplied by the school"
+    "Identifier of the student as supplied by the school"
     id: String @mask(regExp: "^stud[0-9]{1,10}$")
 }
 ```

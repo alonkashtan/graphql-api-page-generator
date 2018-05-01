@@ -187,15 +187,11 @@
             .tooltip {
                 position: relative;
             }
-            /* Tooltip text */
-            .tooltip .tooltiptext {
+            /* Tooltip container */
+            .tooltip .tooltipcontainer {
                 visibility: hidden;
-                
-                background-color: var(--medium-shade);
-                color: Black;
-                padding: 5px;
-                border-radius: 6px;
-                font-size: small;
+                width: 350px;  /* this is the maximal width of the tooltip */
+                display: block;
 
                 /* Position the tooltip text */
                 position: absolute;
@@ -209,6 +205,18 @@
                 opacity: 0;
                 transition: opacity 0.3s;
             }
+
+            /* Tooltip content */
+            .tooltiptext {
+                background-color: var(--medium-shade);
+                color: Black;
+                padding: 10px;
+                border-radius: 6px;
+                font-size: small;
+                float: left;
+                display: block; /* needed so the border will draw nice */
+            }
+
             .tooltip .bottom{
                 top: 100%;
                 left: 0;
@@ -216,7 +224,7 @@
             }
 
             /* Tooltip arrow */
-            .tooltip .tooltiptext::after {
+            .tooltip .tooltipcontainer::after {
                 content: "";
                 position: absolute;
                 top: 50%;
@@ -229,7 +237,7 @@
             }
 
             /* Show the tooltip text when you mouse over the tooltip container */
-            .tooltip:hover .tooltiptext {
+            .tooltip:hover .tooltipcontainer {
                 visibility: visible;
                 opacity: 0.9;
             }
@@ -306,7 +314,11 @@
                                     <a style='font-size: small' href='#<%= type%>'><%= type %></a>
                                     <span style='font-size: x-small;'><%- desctxt %></span>
                                 </div>
-                                <span class='tooltiptext'><%- desc %></span>
+                                <% if (desc) { %>
+                                    <div class='tooltipcontainer'>
+                                        <p class='tooltiptext'><%- desc %></p>
+                                    </div>
+                                <% } %>
                             </li>
                             <%
                         }
