@@ -3,7 +3,7 @@ A command line tool for generating an API page from a GraphQL schema that is int
 
 [Directives](#supported-directives) can be used for extra information about the schema. 
 
-HTML and Markdown descriptions [are supported](#html-markdown-description-support)! 
+HTML and Markdown descriptions [are supported](#html--markdown-description-support)! 
 
 ![Screenshot](/docs/screenshot.png)
 
