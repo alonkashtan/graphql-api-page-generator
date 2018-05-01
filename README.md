@@ -115,7 +115,7 @@ type Student {
     "The name of the student"
     friends(
         "get a limited number of friends"
-        first: Int! @range(min: 1)
+        first: Int! @range(min: 1, maxPrecision: 0.1)
     ): String!
     "The average grade"
     grade: Int @range(min: 0, max: 100)
