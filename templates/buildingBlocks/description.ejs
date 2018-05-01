@@ -9,7 +9,7 @@
     <% } if (locals.range) { %>
         <div class='directives'>
             <b>Range:</b>
-                <%= "[" + (range.min || "-∞") + "," + (range.max || "∞") + "]"; %>
+                <%= "[" + (range.min || "-∞") + "," + (range.max || "∞") + "]"; %> <%= range.maxPrecision? ", maximal precision: " + range.maxPrecision : "" %>
         </div>
     <% } if (locals.length) { %>
         <div class='directives'>

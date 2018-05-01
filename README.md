@@ -100,10 +100,12 @@ Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-deprecated.png)
 ### The `@range` directive
 ```GraphQL
-directive @range(min: Float, max: Float) on 
+directive @range(min: Float, max: Float, maxPrecision: Float) on 
     FIELD_DEFINITION|ARGUMENT_DEFINITION|INPUT_FIELD_DEFINITION
 ```
 Used to describe the valid range of a numerical field or argument. If `min` is not provided, it is considered to be -∞ , if `max` is not defined it is considered to be ∞. Both `min` and `max` are regarded as inclusive.
+
+The maximal precision is a number that represents the smallest step acceptable. Typically it will be in a form such as 0.01
 
 <small> ***Note**: some GraphQL libraries do not support custom directives. **GraphQL API Page Generator** will still process this directive wherever it appears, given the schema file. However, this directive will not appear if schema is obtained via introspection.* </small>
 
