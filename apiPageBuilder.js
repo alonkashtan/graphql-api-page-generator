@@ -2,9 +2,6 @@ const ejs = require('ejs');
 const fs = require('fs');
 const graphql = require('graphql');
 
-const elementsTypeFilter = require('./elementsTypeFilter.js')
-const sanitizer = require('./schemaSanitizer')
-const preprocessor = require('./schemaPreprocessor');
 const ViewModel = require('./view_model/viewModel');
 
 module.exports = {

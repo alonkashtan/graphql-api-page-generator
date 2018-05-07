@@ -85,7 +85,7 @@ Used to indicate deprecation, with an optional reason. Can be used on type (any 
 
 <small> ***Note**: some GraphQL libraries declare deprecated to be used on less schema parts (only field definition for example). Although this **deprecated** message will not show up in introspection (and therefore neither in GraphiQL, you can still declare it in the schema file and **GraphQL API Page Generator** will still process this directive wherever it appears, given the schema file. However, this directive will not appear if schema is obtained via introspection.* </small>
 
-Example:
+**Example:**
 ```GraphQL
 type Student @deprecated (reason: "University is closing") {
     "The name of the student"
@@ -100,7 +100,7 @@ Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-deprecated.png)
 ### The `@range` directive
 ```GraphQL
-directive @range(min: Float, max: Float, maxPrecision: Float) on 
+directive @range(min: Float = -∞, max: Float = ∞, maxPrecision: Float) on 
     FIELD_DEFINITION|ARGUMENT_DEFINITION|INPUT_FIELD_DEFINITION
 ```
 Used to describe the valid range of a numerical field or argument. If `min` is not provided, it is considered to be -∞ , if `max` is not defined it is considered to be ∞. Both `min` and `max` are regarded as inclusive.
@@ -109,7 +109,7 @@ The maximal precision is a number that represents the smallest step acceptable. 
 
 <small> ***Note**: some GraphQL libraries do not support custom directives. **GraphQL API Page Generator** will still process this directive wherever it appears, given the schema file. However, this directive will not appear if schema is obtained via introspection.* </small>
 
-Example:
+**Example:**
 ```GraphQL
 type Student {
     "The name of the student"
@@ -125,14 +125,25 @@ Result: <br/>
 ![Deprecated screenshot](/docs/screenshot-range.png)
 ### The `@length` directive
 ```GraphQL
-directive @length(min: Float, max: Float) on 
+directive @length(min: Float = 0, max: Float = ∞, level: Int = 1) on 
     FIELD_DEFINITION|ARGUMENT_DEFINITION|INPUT_FIELD_DEFINITION
 ```
-Used to describe the valid length of field or argument that are array or string. If `min` is not provided, it is considered to be 0 , if `max` is not defined it is considered to be ∞. Both `min` and `max` are regarded as inclusive.
+Used to describe the valid length of field or argument that are **`array`** or **`string`**. If `min` is not provided, it is considered to be 0 , if `max` is not defined it is considered to be ∞. Both `min` and `max` are regarded as inclusive.
+
+`level` is used for nested objects tha has length. For example, a field of type `[[int]]`, in which we would want to describe length limit of outer and inner arrays, or field of type `[string]` in which we would like to describe the length of both the array and the string.<br/>
+The `level` is ordering the length definitions from outer to inner, e.g. in this definition: 
+```
+nameLists: [[string]] 
+    @length(max: 3, level:1) 
+    @length(min: 1, max: 8, level:2) 
+    @length(max:5, level: 3)
+```
+we have an array that holds up to 3 arrays, each one with 1 to 8 strings in length of up to 5 characters.<br/>
+If `level` is not defined it is considered to be 1. `@length` directive with equal `level` are sorted according to order of appearance.
 
 <small> ***Note**: some GraphQL libraries do not support custom directives. **GraphQL API Page Generator** will still process this directive wherever it appears, given the schema file. However, this directive will not appear if schema is obtained via introspection.* </small>
 
-Example:
+**Example:**
 ```GraphQL
 type Query {
     "get all stidents"
@@ -142,6 +153,9 @@ type Query {
     ): [Student] @length
     "Get all classes"
     classes: [Class] @length(min: 0, max: 100)
+    otherNames: [String] 
+        @length(max:8, level: 1) 
+        @length(min: 2, max: 20, level: 2)
 }
 ```
 Result: <br/>
@@ -154,9 +168,9 @@ directive @mask(regExp: String!) on
 ```
 Used to describe the valid values of a string field or argument.
 
-***Note**: some GraphQL libraries do not support custom directives. **GraphQL API Page Generator** will still process this directive wherever it appears, given the schema file. However, this directive will not appear if schema is obtained via introspection.* 
+<small>***Note**: some GraphQL libraries do not support custom directives. **GraphQL API Page Generator** will still process this directive wherever it appears, given the schema file. However, this directive will not appear if schema is obtained via introspection.*</small>
 
-Example:
+**Example:**
 ```GraphQL
 type Student {
     "Identifier of the student as supplied by the school"

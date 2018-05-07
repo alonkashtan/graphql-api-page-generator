@@ -1,5 +1,11 @@
 const graphql = require('graphql');
 
+/**
+ * Returns an object that contains all the arguments present on a directive in its AST branch
+ * as keys, and their values as value.
+ * @param {graphql.DocumentNode} directive the AST branch of a directive
+ * @returns {Object}
+ */
 function directiveToArgs(directive){
     let args = {};
     directive.arguments.forEach(arg => {
@@ -26,7 +32,7 @@ module.exports = {
      * Returns the arguments of a directive if it exists, or false if not.
      * 
      * @param {graphql.GraphQLNamedType} itemSchema the node's schema
-     * @param {string} kind kind of node (e.g. Type/Scalar/Object etc). Used for default deprecation message
+     * @param {string} directiveName the desired directive's name
      * @returns {(object|boolean)} the arguments of the directive, or false if directive not exists.
      */
     getDirective: function(itemSchema, directiveName){
@@ -41,7 +47,7 @@ module.exports = {
      * Returns the arguments of all instances of directive if any, or false if not.
      * 
      * @param {graphql.GraphQLNamedType} itemSchema the node's schema
-     * @param {string} kind kind of node (e.g. Type/Scalar/Object etc). Used for default deprecation message
+     * @param {string} directiveName the desired directive's name
      * @returns {(object[]|boolean)} the arguments of the directive, or false if directive not exists.
      */
     getDirectives: function(itemSchema, directiveName){
@@ -67,7 +73,7 @@ module.exports = {
         this.makeGettersEnumerable(prototype);
     },
     /**
-     * Flattens a object that is used as a map to an array of values, skipping any key that starts with '__' (i.e. private field).
+     * Flattens an object that is used as a map to an array of values, skipping any key that starts with '__' (i.e. private field).
      * @param {*} map the map
      * @returns {*[]} the values of the maps.
      */

@@ -62,7 +62,7 @@ let args = yargs
     )
     .demandCommand()
     .help()
-    .argv;
+    .argv; //parse
 
 if (command===file) {
     let schemaText = fs.readFileSync(args.path, 'utf-8');

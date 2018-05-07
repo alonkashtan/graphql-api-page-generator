@@ -2,9 +2,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="https://fonts.googleapis.com/css?family=Bitter:700|Poppins|Roboto" rel="stylesheet">
         <title><%= apiName %></title>
         <style name='fontImports'>
+            /* == Import fonts == */
             @font-face {
                 font-family: 'headFont';
                 font-style: normal;
@@ -77,6 +77,7 @@
             }
         </style>
         <style name='general'>
+            /* ==  Basic CSS for the page == */
             :root {
                 --dark-shade: Gray;
                 --medium-shade: LightGray;
@@ -184,6 +185,7 @@
             }
         </style>
         <style name='tooltip'>
+            /* ==  Style for the tooltip == */
             .tooltip {
                 clip-path: polygon(0 60%, 4px calc(60% - 4px),4px 0px, 100% 0px, 100% 100%, 4px 100%, 4px calc(60% + 4px));
                 background-color: var(--medium-shade);
@@ -208,6 +210,7 @@
             }
         </style>
         <script name="tooltip">
+            /* ==  Tooltip script == */   
             // A decorating container that adds a tolltip to whatever is inside. Outline behaves like a div
 			class TooltippedLabel extends HTMLElement {
 				    constructor() {
@@ -258,6 +261,7 @@
 			customElements.define("tipped-label", TooltippedLabel);
 		</script>
         <style name='nav'>
+            /* ==  Style for the nabigation bar == */
             nav {
                 float: left;
                 position: sticky;
@@ -306,6 +310,8 @@
             <h1><%= apiName %></h1>
             <p><%= apiDescription %></p>
         </header>
+
+        <!-- Navigation bar -->
         <nav>
             <p style="font-size: smaller; text-align: center"><a href="#top">▲ Top ▲</a><p>
             <%
@@ -349,6 +355,8 @@
             }
             %>
         </nav>
+
+        <!-- Type sections -->
         <%
         for (let i in order){
             if (!order.hasOwnProperty(i)) continue;

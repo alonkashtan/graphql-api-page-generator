@@ -1,13 +1,15 @@
 const graphql = require('graphql');
-const helpers = require('./helpers');
 const sanitize = require('sanitize-html');
 const md = require('markdown-it')({
     html: true,
     linkify: true
-  });
+});
+
+const helpers = require('./helpers');
 
 /**
  * Returns names of type and basic type for a node.
+ * The basic type is used for links.
  * For example, for [string!] will be returned:
  * {
  *  type: "[string!]",
@@ -18,7 +20,7 @@ const md = require('markdown-it')({
 function getBasicType(type){
     
     if (type.ofType) {
-        return getBasicType(type.ofType);
+        return getBasicType(type.ofType); // the basic type may also be composite, e.g. for "[String!]!"
     }
     return type.toString();
 }
@@ -39,6 +41,10 @@ class AbstractTypeViewModel {
         helpers.makeGettersEnumerable(this);
     }
 
+    /**
+     * Kind of node represented by this view model
+     */
+    // currently used only for default Deprecated message.
     get kind(){
         return 'Object';
     }
@@ -59,6 +65,9 @@ class AbstractTypeViewModel {
             : null;
     }
 
+    /**
+     * @returns {(string|boolean)} a string describing the reason that this node is deprecated or false if not deprecated.
+     */
     get deprecated(){
         return helpers.deprecated(this.itemSchema, this.kind)
     }

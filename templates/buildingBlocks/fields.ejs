@@ -1,3 +1,4 @@
+<%# Renders a description of all the fields of a node. Locals should be view model of the node %>
 <h4>Fields:</h4>
 <div class='content'><%
 for (var i in fields){
@@ -10,6 +11,8 @@ for (var i in fields){
             <span class='name'><a href='#<%= field.basicType %>'><%= field.type %></a></span>
         </p>
         <%- include('description.ejs', field) %>
+        
+        <%# Arguments %>
         <%
         if (field.arguments.length > 0){
         %>
@@ -24,7 +27,7 @@ for (var i in fields){
                     %>
                     <tr>
                         <td><b><a href='#<%= argument.basicType %>'><%= argument.type %></a></b></td>
-                        <td><b <%- argument.deprecated? "class='deprecated' title='Deprecated'" : "" %>><%= argument.name %></b></td>
+                        <td><b <%- argument.deprecated? "class='deprecated' title='Deprecated'" : "" %> ><%= argument.name %></b></td>
                         <td><%- include('description.ejs', argument) %></td>
                     </tr>
                 <% 

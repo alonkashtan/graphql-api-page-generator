@@ -22,7 +22,6 @@
     "graphql": "^0.13.2",
     "markdown-it": "^8.4.1",
     "request": "^2.85.0",
-    "request-promise": "^4.2.2",
     "sanitize-html": "^1.18.2",
     "yargs": "^11.0.0"
   },

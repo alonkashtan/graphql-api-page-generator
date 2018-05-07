@@ -1,5 +1,5 @@
 const graphql = require('graphql');
-const filter = require('../elementsTypeFilter')
+
 const helpers = require('./helpers');
 const TypeViewModel = require('./typeViewModel').TypeViewModel;
 const InterfaceViewModel = require('./typeViewModel').InterfaceViewModel;
@@ -9,9 +9,7 @@ const UnionViewModel = require('./typeViewModel').UnionViewModel;
 const InputViewModel = require('./typeViewModel').InputViewModel;
 
 /**
- * View model that represents the GraphQL schema AST for the EJS generator.
- * The engine assumes that the names of the getters match the name of the properties of
- * elementsTypeFilter.
+ * View model that represents the GraphQL schema for the EJS generator.
  */
 class ViewModel {
     /**

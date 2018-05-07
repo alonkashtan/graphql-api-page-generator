@@ -1,23 +1,39 @@
+<%# Renders a description of a node (type/field/argument). Locals should be view model of the node %>
 <div>
+    <%# Deprecation message %>
     <% if (locals.deprecated) { %>
         <div class='directives'>
             <b style='color: red'>Deprecated</b>:
                 <%= deprecated %>
         </div>
+
+    <%# Description of node %>
     <% } if (locals.description){ %>
         <div class='description'><%- description %></div>
+
+    <%# Range directive %>
     <% } if (locals.range) { %>
         <div class='directives'>
             <b>Range:</b>
                 <%= "[" + (range.min || "-∞") + "," + (range.max || "∞") + "]"; %> <%= range.maxPrecision? ", maximal precision: " + range.maxPrecision : "" %>
         </div>
+
+    <%# Length directive %>
     <% } if (locals.length) { %>
         <div class='directives'>
             <b>Length:</b>
-                <%= length.sort(length.level?length.level:1).
+                <%# The length is an array of multilevel %>
+                <%= length.sort((l1,l2) => 
+                                    { 
+                                        l1 = l1.level || 1; // default 1
+                                        l2 = l2.level || 1; 
+                                        return l1-l2;
+                                    }).
                         map(length => "["+(length.min || "0") + "," + (length.max || "∞") + "]").
                         join("=>"); %>
         </div>
+
+    <%# Mask directive %>
     <% } if (locals.mask) { %>
         <div class='directives'>
             <b>Mask:</b>
