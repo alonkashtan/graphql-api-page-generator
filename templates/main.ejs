@@ -185,63 +185,78 @@
         </style>
         <style name='tooltip'>
             .tooltip {
-                position: relative;
-            }
-            /* Tooltip container */
-            .tooltip .tooltipcontainer {
-                visibility: hidden;
-                width: 350px;  /* this is the maximal width of the tooltip */
-                display: block;
-
-                /* Position the tooltip text */
-                position: absolute;
-                z-index: 1;
-                top: 50%;
-                transform: translateY(-50%); /* top 50% -> center 50% */
-                left: 100%;
-                margin-left: 5px;
-
-                /* Fade in tooltip */
-                opacity: 0;
-                transition: opacity 0.3s;
-            }
-
-            /* Tooltip content */
-            .tooltiptext {
+                clip-path: polygon(0 60%, 4px calc(60% - 4px),4px 0px, 100% 0px, 100% 100%, 4px 100%, 4px calc(60% + 4px));
                 background-color: var(--medium-shade);
-                color: Black;
-                padding: 10px;
-                border-radius: 6px;
-                font-size: small;
-                float: left;
-                display: block; /* needed so the border will draw nice */
+                position:fixed;
+                color:black;
+                font-family:Arial;
+                padding:5px;
+                padding-left:10px;
+                max-width:350px;
+                z-index:101;
+                opacity:0;
+                transition:opacity 0.4s linear;
             }
-
-            .tooltip .bottom{
-                top: 100%;
-                left: 0;
-                transform: none;
+            .visible {
+                opacity:0.9;
             }
-
-            /* Tooltip arrow */
-            .tooltip .tooltipcontainer::after {
-                content: "";
-                position: absolute;
-                top: 50%;
-                left: 0;
-                margin-left: -9px;
-                margin-top: auto;
-                border-width: 5px;
-                border-style: solid;
-                border-color: transparent var(--medium-shade) transparent transparent;
+            tipped-label {
+                display:block;
             }
-
-            /* Show the tooltip text when you mouse over the tooltip container */
-            .tooltip:hover .tooltipcontainer {
-                visibility: visible;
-                opacity: 0.9;
+            tooltip {
+                display: none;
             }
         </style>
+        <script name="tooltip">
+            // A decorating container that adds a tolltip to whatever is inside. Outline behaves like a div
+			class TooltippedLabel extends HTMLElement {
+				    constructor() {
+						super();
+						this.addEventListener('mouseover',this.tooltip);
+					}
+                    
+                    /**
+                     * Calculates x (left) and y (top) placment for the tolltip, based on the position of domElement.
+                     * @param {HTMLElement} domElement the DOM element that that the tooltip is relative to
+                     * @param {HTMLElement} tooltipObj the tooltip itself
+                     * @returns {Object} an object of the form {x,y} that is the calculated position for tooltip, where x is left and y is top
+                     */
+					_calcPositionForTooltip(domElement, tooltipObj){
+                        let rect = domElement.getBoundingClientRect();
+                        let parentRect = domElement.offsetParent.getBoundingClientRect();
+						return {x: parentRect.right, y: (rect.top+rect.bottom)/2 - tooltipObj.offsetHeight*0.55}
+					}
+                    
+                    // on mouseover
+					tooltip(event){	
+						let sourceElement = event.currentTarget,
+						text = sourceElement.getAttribute("tooltip"),      // Text in attribute "tooltip" of tiped-lable, if any
+						richText = sourceElement.querySelector('tooltip'), // Content of tag "tooltip" in tiped-lable, if exists
+						tooltipObj = document.createElement("div");        // The tooltip
+
+						let content = richText? richText.innerHTML : text // content of tag preceeds content of attribute
+
+						tooltipObj.classList.add("tooltip");
+						tooltipObj.innerHTML = content;
+					
+						let hideToolTip = () => {
+							document.body.removeChild(tooltipObj);
+							sourceElement.removeEventListener('mouseout',hideToolTip);
+						};
+					
+						if(content !== "" && content !== null){ // a tipped-lable without tooltip content will not be shown
+							sourceElement.addEventListener('mouseout',hideToolTip);
+							document.body.appendChild(tooltipObj);
+							let tooltipPosition = this._calcPositionForTooltip(sourceElement, tooltipObj);
+							tooltipObj.style.left = tooltipPosition.x + "px";
+							tooltipObj.style.top = tooltipPosition.y + "px";
+							tooltipObj.classList.add("visible");
+						}
+					}
+            }
+            
+			customElements.define("tipped-label", TooltippedLabel);
+		</script>
         <style name='nav'>
             nav {
                 float: left;
@@ -269,8 +284,12 @@
             }
             nav ul {
                 list-style-type: none;
-                padding: 0;                
+                padding: 0;
                 margin: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                max-height: calc(100vh - 350px); /* 350px equals to about all the headers of the navigation bar */
+                min-height: 43px;
             }
             nav li {
                 padding: 5px;
@@ -309,17 +328,17 @@
                             let desctxt = types[i].descriptionText;
                             const maxLength=20;
                             %>
-                            <li class='tooltip'>
+                            <li><tipped-label>                                
                                 <div style='text-overflow: ellipsis; white-space: nowrap; width: inherit; overflow: hidden'>
                                     <a style='font-size: small' href='#<%= type%>'><%= type %></a>
                                     <span style='font-size: x-small;'><%- desctxt %></span>
                                 </div>
                                 <% if (desc) { %>
-                                    <div class='tooltipcontainer'>
-                                        <p class='tooltiptext'><%- desc %></p>
-                                    </div>
+                                    <tooltip>
+                                        <%- desc %>
+                                    </tooltip>
                                 <% } %>
-                            </li>
+                            </tipped-label></li>
                             <%
                         }
                     }
