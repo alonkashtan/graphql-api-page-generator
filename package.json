@@ -1,6 +1,6 @@
 {
   "name": "graphql-api-page-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generates an API page from a GraphQL schema that is intended for public display.",
   "main": "index.js",
   "bin": {
