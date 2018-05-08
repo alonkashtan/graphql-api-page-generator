@@ -1,8 +1,10 @@
 const ejs = require('ejs');
 const fs = require('fs');
+const path = require('path');
 const graphql = require('graphql');
 
 const ViewModel = require('./view_model/viewModel');
+const scriptDir = __dirname;
 
 module.exports = {
     /**
@@ -21,7 +23,7 @@ module.exports = {
             apiDescription: apiDescription,
         }
     
-        ejs.renderFile('./templates/main.ejs', templateParam,null,function(err,str){
+        ejs.renderFile(path.join(scriptDir,'templates/main.ejs'), templateParam,null,function(err,str){
             if (err){
                 console.error("Could not render: " + err);
                 return;
