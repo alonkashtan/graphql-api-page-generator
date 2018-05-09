@@ -66,8 +66,25 @@ let args = yargs
 
 if (command===file) {
     let schemaText = fs.readFileSync(args.path, 'utf-8');
-    apiPageBuilder.buildAPIPage(graphql.buildSchema(schemaText), args.apiname, args.description, args.outputfile);
-    process.exit();
+    
+    let schema;
+    try{
+        schema = graphql.buildSchema(schemaText);
+    }
+    catch (e){
+        console.error("Could not build schema from file: " + e);
+        process.exit(1);
+    }
+
+    apiPageBuilder.buildAPIPage(schema, args.apiname, args.description, args.outputfile)
+        .then(html => {
+            fs.writeFileSync(args.outputfile, html);
+            process.exit();
+        })
+        .catch(reason => {
+            console.error(reason);
+            process.exit(2);
+        });
 }
 if (command===url){
     let query = graphql.introspectionQuery;
@@ -86,11 +103,27 @@ if (command===url){
         (err, res, body)=>{
             if (err) {
                 console.error("Could not retrieve introspection query: " + err);
-                process.exit(2);
+                process.exit(3);
             }
 
-            let schema=graphql.buildClientSchema(body.data);
-            apiPageBuilder.buildAPIPage(schema, args.apiname, args.description, args.outputfile);
-            process.exit();
-    })
+            let schema;
+            try{
+                schema=graphql.buildClientSchema(body.data);
+            }
+            catch(e) {
+                console.error("Could not build schema from introspection response: " + e);
+                process.exit(1);
+            }
+
+
+            apiPageBuilder.buildAPIPage(schema, args.apiname, args.description)
+                .then(html => {
+                    fs.writeFileSync(args.outputfile, html);
+                    process.exit();
+                })
+                .catch(reason => {
+                    console.error(reason);
+                    process.exit(2);
+                });
+        });
 }

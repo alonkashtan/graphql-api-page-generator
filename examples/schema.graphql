@@ -1,0 +1,83 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""
+Defines the allowed range of the 
+"""
+directive @range(min: Float, max:Float, maxPrecision: Float = 1) on SCALAR|OBJECT|FIELD_DEFINITION|ARGUMENT_DEFINITION|INTERFACE|UNION|ENUM|ENUM_VALUE|INPUT_OBJECT|INPUT_FIELD_DEFINITION
+
+"""
+Represents a <b>year</b><br/>
+And more
+"""
+scalar Year
+
+"A named object <img src='hello'/> <h1>definition</h1>"
+interface Named {
+    "name of the object"
+    name(num: Int! @deprecated(reason: "use family instead")): String!
+}
+
+"Represents a student. This is a very important object for understanding how this repo works af therefore needs a very very long description so we know it's important"
+type Student implements Named  @deprecated (reason: "yup") {
+    "The name of the student"
+    name(num: Int!): String! @deprecated(reason: "Bad idea") @range(min: 7, maxPrecision: 0.01)
+    "Current age"
+    age: Year 
+    "The average grade"
+    grade: Float
+}
+
+"Course difficulty"
+enum Difficulty{
+    "Easier then eating pizza"
+    EASY, 
+    "Harder then eating just one slice of pizza"
+    HARD @deprecated(reason: "קשה יש רק בלחם")
+}
+
+"A course"
+type Course implements Named {
+    "The name of the course"
+    name(num: Int!): String!
+    "All the students that study the course"
+    students(
+        "Show only students above this grade"
+        minimumGrade: Int): [Student]
+
+    difficulty: Difficulty
+}
+
+"desc desc"
+union UniversityObject = Student | Course
+
+"Services for querying data"
+type Query{
+    "get all students"
+    students(
+        "get only the first <code>max</code> results"
+        first: Int @range(max: 500),
+        "Starts with this letter"
+        letter: String! @length(min:1, max: 1)
+    ): [Student]
+    "get all courses"
+    courses: [Course]
+    "get all the named objects"
+    namedObjects: [Named]
+    "desc desc"
+    universityThingies: [UniversityObject]
+}
+
+"Student input info"
+input InputStudent{
+    "Student name"
+    name: String @mask(simpleMask: "ddd", regExp: "^[a-zA-Z]+$")
+}
+
+"desc desc"
+type Mutation{
+    "Add a student. Returns ID of the student"
+    addStudent("Student name" name: String, x: [InputStudent]): Int
+}

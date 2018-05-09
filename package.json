@@ -2,9 +2,9 @@
   "name": "graphql-api-page-generator",
   "version": "1.0.1",
   "description": "Generates an API page from a GraphQL schema that is intended for public display.",
-  "main": "index.js",
+  "main": "apiPageBuilder.js",
   "bin": {
-    "gqlapi": "./index.js"
+    "gqlapi": "./commandline.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

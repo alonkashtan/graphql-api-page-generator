@@ -8,12 +8,12 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\index.js",
+            "program": "${workspaceFolder}\\commandline.js",
             "args": [
                 // "from-url","out.html","localhost:4000/graphql","Example API","This is a great API"
-                // "from-url","out.html","http://localhost:4000/introspect","GitHub Developer's API","This is a great API."
+                // "from-file","out.html","examples/githubSchema.graphql","GitHub Developer's API","This is a great API."
                 "from-url","out.html","http://graphql.communitygraph.org/graphql/","GraphQL Community Graph","This is a great API"
-                // "from-file","out.html","schema.graphql","Example API", "This is a description of a great API"
+                // "from-file","out.html","examples/schema.graphql","Example API", "This is a description of a great API"
             ]
         }
     ]

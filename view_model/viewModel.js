@@ -1,4 +1,9 @@
 const graphql = require('graphql');
+const sanitize = require('sanitize-html');
+const md = require('markdown-it')({
+    html: true,
+    linkify: true
+});
 
 const helpers = require('./helpers');
 const TypeViewModel = require('./typeViewModel').TypeViewModel;
@@ -15,10 +20,14 @@ class ViewModel {
     /**
      * @constructor
      * @param {graphql.GraphQLSchema} schema GraphQL schema as produced by {@link graphql.buildSchema}.
+     * @param {string} apiName the name of the API
+     * @param {string} apiDescription a description of the API. May be HTML or Markdown (HTML will be sanitized).
      */
-    constructor(schema) {
+    constructor(schema, apiName, apiDescription) {
         this.schema = schema;
         this._types = helpers.mapToArray(schema.getTypeMap());
+        this.apiName = sanitize(apiName, { allowedTags: [] });
+        this.apiDescription = md.renderInline(sanitize(apiDescription));
 
         helpers.makeGettersEnumerable(this);
     }

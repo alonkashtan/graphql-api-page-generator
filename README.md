@@ -1,5 +1,5 @@
 # GraphQL API Page Generator
-A command line tool for generating an API page from a GraphQL schema that is intended for public display.
+A npm package and command line tool for generating an API page from a GraphQL schema that is intended for public display.
 
 [Directives](#supported-directives) can be used for extra information about the schema. 
 
@@ -8,7 +8,11 @@ HTML and Markdown descriptions [are supported](#html--markdown-description-suppo
 ![Screenshot](/docs/screenshot.png)
 
 ## Installation
-To install:
+To install as NodeJS npm package:
+
+    npm install graphql-api-page-generator
+
+To install as command line tool:
 
     npm install -g graphql-api-page-generator
 
@@ -16,7 +20,43 @@ To see all the options and verify installation:
 
     gqlapi --help
 
-## Usage
+## Usage - NodeJS
+#### Example 1: Generating an API page from GraphQL schema (text)
+<small>Examples of real schema files can be found under [/examples](https://github.com/alonkashtan/graphql-api-page-generator/tree/master/examples) folder. It includes one example of a schema that is using the features of this generator, and the schema of [GitHub's API](https://developer.github.com/v4/), which was obtained via introspection <small>(on April 24th 2018)</small></small>
+```javascript
+const generator = require('graphql-api-page-generator')
+
+// GraphQL schema as text. Good chances you will actually read this from a file.
+let schema = `
+type Student {
+    name: String @length(min: 2, max: 5)
+    age: Int @range(max: 120)
+}
+type Query {
+    students: [Student] @length(max: 1000)
+}
+`
+
+generator.buildAPIPage(schema, "Students API", "An API to get all students.")
+    .then(html => /* do something with the HTML text */)
+    .catch(reason => /* handle failure */);
+```
+
+#### Example 2: Generating an API page from a live GraphQL server (via introspection)
+```javascript
+const generator = require('graphql-api-page-generator')
+
+let query = graphql.introspectionQuery;
+let introspectionResult = /* response body for a POST request to the server with 'query' as a body */
+
+let schema=graphql.buildClientSchema(introspectionResult.data);
+apiPageBuilder.buildAPIPage(schema, "Students API", "An API to get all students.")
+    .then(html => /* do something with the HTML text */)
+    .catch(reason => /* handle failure */);
+});
+```
+
+## Usage - Command line
 ### Generating an API page from a schema file
 **GraphQL API Page Generator** supports the GraphQL SDL of [graphql.js](https://github.com/graphql/graphql-js)
 

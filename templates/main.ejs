@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><%= apiName %></title>
+        <title><%= viewModel.apiName %></title>
         <style name='fontImports'>
             /* == Import fonts == */
             @font-face {
@@ -307,8 +307,8 @@
     </head>
     <body>
         <header style='margin: 40px;'>
-            <h1><%= apiName %></h1>
-            <p><%= apiDescription %></p>
+            <h1><%= viewModel.apiName %></h1>
+            <p><%- viewModel.apiDescription %></p>
         </header>
 
         <!-- Navigation bar -->
