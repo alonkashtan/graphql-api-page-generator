@@ -88,6 +88,13 @@ class TypeViewModel extends AbstractTypeViewModel {
         return helpers.mapToArray(this.itemSchema.getFields())
                     .map(field => new FieldViewModel(field, this.completeSchema));
     }
+
+    get implements(){
+        if (!this.itemSchema.getInterfaces) return undefined;
+        
+        return this.itemSchema.getInterfaces()
+            .map(inter => inter.name)
+    }
 }
 
 class InterfaceViewModel extends TypeViewModel {

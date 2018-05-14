@@ -22,7 +22,7 @@ To see all the options and verify installation:
 
 ## Usage - NodeJS
 #### Example 1: Generating an API page from GraphQL schema (text)
-<small>Examples of real schema files can be found under [/examples](https://github.com/alonkashtan/graphql-api-page-generator/tree/master/examples) folder. It includes one example of a schema that is using the features of this generator, and the schema of [GitHub's API](https://developer.github.com/v4/), which was obtained via introspection <small>(on April 24th 2018)</small></small>
+<small>Examples of real schema files can be found under [/examples](examples) folder. It includes one example of a schema that is using the features of this generator, and the schema of [GitHub's API](https://developer.github.com/v4/), which was obtained via introspection <small>(on April 24th 2018)</small></small>.
 ```javascript
 const generator = require('graphql-api-page-generator')
 
@@ -172,7 +172,7 @@ Used to describe the valid length of field or argument that are **`array`** or *
 
 `level` is used for nested objects tha has length. For example, a field of type `[[int]]`, in which we would want to describe length limit of outer and inner arrays, or field of type `[string]` in which we would like to describe the length of both the array and the string.<br/>
 The `level` is ordering the length definitions from outer to inner, e.g. in this definition: 
-```
+```GraphQL
 nameLists: [[string]] 
     @length(max: 3, level:1) 
     @length(min: 1, max: 8, level:2) 

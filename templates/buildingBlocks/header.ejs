@@ -1,5 +1,12 @@
 <%# Renders a type header for a node. Locals should be view model of the node %>
 <h3 id='<%= name %>'> <span <%- deprecated? "class='deprecated' title='Deprecated'" :""%>>
     <%= name %>
-</span></h3>
+</span>
+    <% if (locals.implements && locals.implements.length>0){ %>
+    <span class='typedecor'>
+        Implements: <%- implements.map(inter => '<a class="name" href="#' + inter + '">' + inter + '</a>').join(', '); %>
+    </span>
+    <% } %>
+</h3>
+
 <%- include('description.ejs', locals) %>
