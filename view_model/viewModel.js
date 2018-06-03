@@ -22,12 +22,14 @@ class ViewModel {
      * @param {graphql.GraphQLSchema} schema GraphQL schema as produced by {@link graphql.buildSchema}.
      * @param {string} apiName the name of the API
      * @param {string} apiDescription a description of the API. May be HTML or Markdown (HTML will be sanitized).
+     * @param {string} headPart text to be inserted in end of `head` tag.
      */
-    constructor(schema, apiName, apiDescription) {
+    constructor(schema, apiName, apiDescription, headPart) {
         this.schema = schema;
         this._types = helpers.mapToArray(schema.getTypeMap());
         this.apiName = sanitize(apiName, { allowedTags: [] });
         this.apiDescription = md.renderInline(sanitize(apiDescription));
+        this.headPart = headPart ? headPart : "";
 
         helpers.makeGettersEnumerable(this);
     }
