@@ -22,7 +22,7 @@
     "graphql": "^0.13.2",
     "markdown-it": "^8.4.1",
     "request": "^2.88.0",
-    "sanitize-html": "^1.18.2",
+    "sanitize-html": "^2.3.2",
     "yargs": "^11.0.0"
   },
   "repository": "github:alonkashtan/graphql-api-page-generator"
